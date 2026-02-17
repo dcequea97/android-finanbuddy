@@ -53,6 +53,9 @@ dependencies {
     implementation(libs.compose.material.icons)
     implementation(libs.compose.material.icons.extended)
 
+    implementation(libs.koin.androidx.compose)
+    implementation(libs.koin.android)
+
     implementation(libs.kotlinx.serialization.core)
 
     implementation(libs.androidx.core.ktx)
