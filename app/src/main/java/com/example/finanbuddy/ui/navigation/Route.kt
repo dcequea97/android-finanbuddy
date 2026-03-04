@@ -15,10 +15,13 @@ sealed interface Route: NavKey {
     object Settings: Route
 
     @Serializable
-    data class AddExpense(val id: Int): Route
+    data object AddExpense: Route
 
     @Serializable
-    data class AddIncome(val id: Int): Route
+    data object AddIncome: Route
+
+    @Serializable
+    data object Transactions: Route
 
     @Serializable
     object ScanReceipt: Route

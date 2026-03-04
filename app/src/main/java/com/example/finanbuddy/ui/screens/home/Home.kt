@@ -2,7 +2,6 @@ package com.example.finanbuddy.ui.screens.home
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,20 +17,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.Analytics
 import androidx.compose.material.icons.rounded.ArrowDownward
 import androidx.compose.material.icons.rounded.ArrowUpward
-import androidx.compose.material.icons.rounded.Dashboard
-import androidx.compose.material.icons.rounded.Settings
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,120 +39,137 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.finanbuddy.ui.components.FinanCard
+import com.example.finanbuddy.ui.navigation.AppScaffold
+import com.example.finanbuddy.ui.navigation.Route
 import com.example.finanbuddy.ui.theme.FinanBuddyTheme
 import com.example.finanbuddy.ui.theme.FinanColors
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
-    Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                val scrollState = rememberScrollState()
+fun HomeScreen(
+    onNavigation: (Route) -> Unit,
+    currentRoute: Route,
+    modifier: Modifier = Modifier
+) {
+    AppScaffold(
+        onNavigation = onNavigation,
+        currentRoute = currentRoute,
+        modifier = modifier,
+        showBottomBar = true,
+        showActionButton = true,
+        showHeader = true
+    ) {
+        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+            Box(modifier = Modifier.fillMaxSize()) {
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .verticalScroll(scrollState)
-                        .padding(horizontal = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                        .fillMaxSize()
                 ) {
-                    // Balance
+                    val scrollState = rememberScrollState()
                     Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .verticalScroll(scrollState)
+                            .padding(horizontal = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        Text(
-                            text = "Total Balance",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.Medium
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = "$4,250.00",
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = 36.sp,
-                            fontWeight = FontWeight.ExtraBold
-                        )
-                    }
-
-                    // Stats cards grid
-                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        StatCard(
-                            title = "Income",
-                            amount = "$3,200",
-                            deltaText = "+12%",
-                            bgColor = FinanColors.Income,
-                            iconTint = FinanColors.OnIncome,
-                            icon = Icons.Rounded.ArrowDownward,
-                            modifier = Modifier.weight(1f)
-                        )
-                        StatCard(
-                            title = "Expenses",
-                            amount = "$1,450",
-                            deltaText = "+5%",
-                            bgColor = FinanColors.Expense,
-                            iconTint = FinanColors.OnExpense,
-                            icon = Icons.Rounded.ArrowUpward,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-
-                    // Activity card
-                    ActivityCard()
-
-                    // Transactions
-                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                        // Balance
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(
-                                text = "Transactions",
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurface
+                                text = "Total Balance",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Medium
                             )
+                            Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "View All",
-                                color = MaterialTheme.colorScheme.primary,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier.clickable { })
+                                text = "$4,250.00",
+                                color = MaterialTheme.colorScheme.onBackground,
+                                fontSize = 36.sp,
+                                fontWeight = FontWeight.ExtraBold
+                            )
                         }
 
-                        val transactions = listOf(
-                            Transaction(
-                                "Netflix",
-                                "Nov 24 • Entertainment",
-                                "-$15.00",
-                                MaterialTheme.colorScheme.error
-                            ),
-                            Transaction(
-                                "Freelance",
-                                "Nov 22 • Income",
-                                "+$500.00",
-                                MaterialTheme.colorScheme.primary
-                            ),
-                            Transaction(
-                                "Grocery Store",
-                                "Nov 20 • Food",
-                                "-$84.20",
-                                MaterialTheme.colorScheme.secondary
+                        // Stats cards grid
+                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            StatCard(
+                                title = "Income",
+                                amount = "$3,200",
+                                deltaText = "+12%",
+                                bgColor = FinanColors.Income,
+                                iconTint = FinanColors.OnIncome,
+                                icon = Icons.Rounded.ArrowDownward,
+                                modifier = Modifier.weight(1f),
+                                onClick = { onNavigation(Route.AddIncome) }
                             )
-                        )
+                            StatCard(
+                                title = "Expenses",
+                                amount = "$1,450",
+                                deltaText = "+5%",
+                                bgColor = FinanColors.Expense,
+                                iconTint = FinanColors.OnExpense,
+                                icon = Icons.Rounded.ArrowUpward,
+                                modifier = Modifier.weight(1f),
+                                onClick = { onNavigation(Route.AddExpense) }
+                            )
+                        }
 
+                        // Activity card
+                        ActivityCard()
+
+                        // Transactions
                         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            transactions.forEach { tx ->
-                                TransactionRow(transaction = tx)
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "Transactions",
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                                Text(
+                                    text = "View All",
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.clickable { onNavigation(Route.Transactions) })
+                            }
+
+                            val transactions = listOf(
+                                Transaction(
+                                    "Netflix",
+                                    "Nov 24 • Entertainment",
+                                    "-$15.00",
+                                    MaterialTheme.colorScheme.error
+                                ),
+                                Transaction(
+                                    "Freelance",
+                                    "Nov 22 • Income",
+                                    "+$500.00",
+                                    MaterialTheme.colorScheme.primary
+                                ),
+                                Transaction(
+                                    "Grocery Store",
+                                    "Nov 20 • Food",
+                                    "-$84.20",
+                                    MaterialTheme.colorScheme.secondary
+                                )
+                            )
+
+                            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                transactions.forEach { tx ->
+                                    TransactionRow(transaction = tx)
+                                }
                             }
                         }
-                    }
 
-                    Spacer(modifier = Modifier.height(48.dp))
+                        Spacer(modifier = Modifier.height(48.dp))
+                    }
                 }
             }
         }
@@ -176,11 +185,13 @@ private fun StatCard(
     bgColor: Color,
     iconTint: Color,
     icon: ImageVector,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
 ) {
     FinanCard(
         modifier = modifier
-            .height(130.dp),
+            .height(130.dp)
+            .clickable { onClick() },
     ) {
         Column(
             modifier = Modifier
@@ -402,7 +413,10 @@ private fun TransactionRow(transaction: Transaction) {
 @Composable
 private fun HomeScreenPreview() {
     FinanBuddyTheme {
-        HomeScreen()
+        HomeScreen(
+            onNavigation = {},
+            currentRoute = Route.Home
+        )
     }
 }
 
@@ -410,6 +424,9 @@ private fun HomeScreenPreview() {
 @Composable
 private fun HomeScreenDarkPreview() {
     FinanBuddyTheme {
-        HomeScreen()
+        HomeScreen(
+            onNavigation = {},
+            currentRoute = Route.Home
+        )
     }
 }
