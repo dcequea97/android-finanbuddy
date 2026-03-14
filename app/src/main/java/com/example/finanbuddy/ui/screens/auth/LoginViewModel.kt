@@ -1,7 +1,9 @@
 package com.example.finanbuddy.ui.screens.auth
 
+import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.finanbuddy.domain.data.Resource
 import com.example.finanbuddy.domain.data.onError
 import com.example.finanbuddy.domain.data.onFinally
 import com.example.finanbuddy.domain.data.onSuccess
@@ -31,12 +33,15 @@ class LoginViewModel(
                 _state.update { it.copy(password = action.password, errorMessage = null) }
             }
 
-            is LoginAction.SignInWithGoogleToken -> {
-                if (action.idToken.isBlank()) {
-                    _state.update { it.copy(errorMessage = "Google token is invalid") }
-                    return
+            is LoginAction.HandleGoogleSignInResult -> {
+                when (val tokenResult = authRepository.extractGoogleIdToken(action.data)) {
+                    is Resource.Success -> authenticate { authRepository.signInWithGoogle(tokenResult.data) }
+                    is Resource.Error -> {
+                        _state.update {
+                            it.copy(errorMessage = tokenResult.message.ifBlank { "Google sign-in failed" })
+                        }
+                    }
                 }
-                authenticate { authRepository.signInWithGoogle(action.idToken) }
             }
 
             LoginAction.SignInWithEmail -> {
@@ -81,6 +86,18 @@ class LoginViewModel(
 
             LoginAction.AuthNavigationConsumed -> {
                 _state.update { it.copy(isAuthenticated = false) }
+            }
+        }
+    }
+
+    fun getGoogleSignInIntent(): Intent? {
+        return when (val intentResult = authRepository.buildGoogleSignInIntent()) {
+            is Resource.Success -> intentResult.data
+            is Resource.Error -> {
+                _state.update {
+                    it.copy(errorMessage = intentResult.message.ifBlank { "Unable to launch Google Sign-In" })
+                }
+                null
             }
         }
     }

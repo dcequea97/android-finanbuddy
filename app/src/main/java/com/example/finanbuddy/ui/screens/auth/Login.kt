@@ -1,8 +1,5 @@
 package com.example.finanbuddy.ui.screens.auth
 
-import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -23,18 +20,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.finanbuddy.R
 import com.example.finanbuddy.ui.navigation.AppScaffold
 import com.example.finanbuddy.ui.navigation.NavigationAction
 import com.example.finanbuddy.ui.navigation.Route
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -44,24 +35,10 @@ fun LoginRoot(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    val context = LocalContext.current
-    val webClientId = stringResource(id = R.string.google_web_client_id)
-
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-        try {
-            val account = task.getResult(ApiException::class.java)
-            val idToken = account.idToken.orEmpty()
-            viewModel.onAction(LoginAction.SignInWithGoogleToken(idToken))
-        } catch (e: Exception) {
-            viewModel.onAction(
-                LoginAction.ShowError(
-                    e.message ?: "Google sign-in failed"
-                )
-            )
-        }
+        viewModel.onAction(LoginAction.HandleGoogleSignInResult(result.data))
     }
 
     LaunchedEffect(state.isAuthenticated) {
@@ -75,26 +52,7 @@ fun LoginRoot(
         state = state,
         onAction = viewModel::onAction,
         onGoogleAuthClick = {
-            if (webClientId.isBlank()) {
-                viewModel.onAction(
-                    LoginAction.ShowError("Missing Google Web Client ID. Update google_web_client_id in strings.xml")
-                )
-                return@LoginScreen
-            }
-            val activity = context.findActivity()
-            if (activity == null) {
-                viewModel.onAction(LoginAction.ShowError("Unable to launch Google Sign-In"))
-                return@LoginScreen
-            }
-
-            val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(webClientId)
-                .requestEmail()
-                .build()
-            val googleSignInClient = GoogleSignIn.getClient(context, googleSignInOptions)
-
-            googleSignInClient.signOut()
-            launcher.launch(googleSignInClient.signInIntent)
+            viewModel.getGoogleSignInIntent()?.let { intent -> launcher.launch(intent) }
         }
     )
 }
@@ -193,15 +151,5 @@ fun LoginScreen(
         }
     }
 }
-
-private tailrec fun Context.findActivity(): Activity? {
-    return when (this) {
-        is Activity -> this
-        is ContextWrapper -> baseContext.findActivity()
-        else -> null
-    }
-}
-
-
 
 

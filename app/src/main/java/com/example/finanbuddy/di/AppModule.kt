@@ -1,5 +1,6 @@
 package com.example.finanbuddy.di
 
+import com.example.finanbuddy.R
 import com.example.finanbuddy.data.repository.FirebaseAuthRepository
 import com.example.finanbuddy.data.repository.FirebaseTransactionRepository
 import com.example.finanbuddy.domain.repository.AuthRepository
@@ -13,6 +14,7 @@ import com.example.finanbuddy.ui.screens.incomes.IncomesViewModel
 import com.example.finanbuddy.ui.screens.transactions.TransactionsListViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -28,7 +30,11 @@ val appModule = module {
     }
 
     single<AuthRepository> {
-        FirebaseAuthRepository(get())
+        FirebaseAuthRepository(
+            firebaseAuth = get(),
+            context = androidContext(),
+            googleWebClientId = androidContext().getString(R.string.google_web_client_id)
+        )
     }
 
     single<FirebaseAuth> {
