@@ -30,19 +30,22 @@ import com.example.finanbuddy.ui.components.inputs.AmountTextField
 import com.example.finanbuddy.ui.components.inputs.CategorySection
 import com.example.finanbuddy.ui.components.inputs.DateTimeSection
 import com.example.finanbuddy.ui.navigation.AppScaffold
+import com.example.finanbuddy.ui.navigation.NavigationAction
 import com.example.finanbuddy.ui.theme.FinanBuddyTheme
 import kotlinx.coroutines.runBlocking
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun IncomesRoot(
+    onNavAction: (NavigationAction) -> Unit,
     viewModel: IncomesViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     IncomesScreen(
         state = state,
-        onAction = viewModel::onAction
+        onAction = viewModel::onAction,
+        onNavAction = onNavAction
     )
 }
 
@@ -50,6 +53,7 @@ fun IncomesRoot(
 fun IncomesScreen(
     state: IncomesState,
     onAction: (IncomesAction) -> Unit,
+    onNavAction: (NavigationAction) -> Unit,
 ) {
     AppScaffold {
         Column(
@@ -58,7 +62,7 @@ fun IncomesScreen(
                 .background(MaterialTheme.colorScheme.background)
         ) {
             // Header
-            DefaultHeader(onClose = {}, title = "New Income")
+            DefaultHeader(onClose = { onNavAction(NavigationAction.Pop) }, title = "New Income")
 
             // Main Content
             Column(
@@ -108,8 +112,18 @@ fun IncomesScreen(
                         .fillMaxWidth()
                         .padding(horizontal = 24.dp, vertical = 24.dp),
                     onClick = { onAction(IncomesAction.SaveTransaction) },
-                    enabled = state.amount.isNotEmpty() && state.selectedCategory != null
+                    enabled = state.amount.isNotBlank() &&
+                            state.selectedCategory?.isNotBlank() == true &&
+                            !state.isLoading
                 )
+
+                state.saveMessage?.let { message ->
+                    LabelSmall(
+                        text = message,
+                        color = if (state.isSaveSuccess) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
+                        modifier = horizontalPadding
+                    )
+                }
             }
         }
     }
@@ -156,7 +170,8 @@ private fun Preview() {
                 selectedCategory = "food",
                 amount = ""
             ),
-            onAction = {}
+            onAction = {},
+            onNavAction = {}
         )
     }
 }
@@ -179,7 +194,8 @@ private fun PreviewDark() {
                 selectedCategory = "food",
                 amount = ""
             ),
-            onAction = {}
+            onAction = {},
+            onNavAction = {}
         )
     }
 }

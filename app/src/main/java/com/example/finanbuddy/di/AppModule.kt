@@ -1,14 +1,22 @@
 package com.example.finanbuddy.di
 
+import com.example.finanbuddy.data.repository.FirebaseAuthRepository
+import com.example.finanbuddy.data.repository.FirebaseTransactionRepository
+import com.example.finanbuddy.domain.repository.AuthRepository
 import com.example.finanbuddy.domain.repository.CategoriesRepository
 import com.example.finanbuddy.domain.repository.ExpenseRepositoryDummy
 import com.example.finanbuddy.domain.repository.TransactionRepository
-import com.example.finanbuddy.domain.repository.TransactionRepositoryDummy
+import com.example.finanbuddy.ui.screens.auth.LoginViewModel
 import com.example.finanbuddy.ui.screens.expenses.ExpenseViewModel
+import com.example.finanbuddy.ui.screens.home.HomeViewModel
 import com.example.finanbuddy.ui.screens.incomes.IncomesViewModel
+import com.example.finanbuddy.ui.screens.transactions.TransactionsListViewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
-import kotlin.math.sin
+
+private const val FIRESTORE_DATABASE_ID = "finan-buddy-db"
 
 val appModule = module {
     single<CategoriesRepository> {
@@ -16,7 +24,19 @@ val appModule = module {
     }
 
     single<TransactionRepository> {
-        TransactionRepositoryDummy()
+        FirebaseTransactionRepository(get())
+    }
+
+    single<AuthRepository> {
+        FirebaseAuthRepository(get())
+    }
+
+    single<FirebaseAuth> {
+        FirebaseAuth.getInstance()
+    }
+
+    single<FirebaseFirestore> {
+        FirebaseFirestore.getInstance(FIRESTORE_DATABASE_ID)
     }
 
     viewModel {
@@ -24,6 +44,18 @@ val appModule = module {
     }
 
     viewModel {
-        IncomesViewModel(get())
+        IncomesViewModel(get(), get())
+    }
+
+    viewModel {
+        HomeViewModel(get())
+    }
+
+    viewModel {
+        LoginViewModel(get())
+    }
+
+    viewModel {
+        TransactionsListViewModel(get())
     }
 }

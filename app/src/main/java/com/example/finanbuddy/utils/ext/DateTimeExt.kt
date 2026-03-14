@@ -11,6 +11,12 @@ fun LocalDate?.defaultFormat(): String {
     return this.format(formatter)
 }
 
+fun LocalDate?.shortFormat(): String {
+    if (this == null) return ""
+    val formatter = DateTimeFormatter.ofPattern("dd/MM/yy", Locale("es", "ES"))
+    return this.format(formatter)
+}
+
 fun LocalTime?.defaultFormat(): String {
     if (this == null) return "Select a time"
     // Formato de 12 horas con AM/PM (ej: 07:30 PM)

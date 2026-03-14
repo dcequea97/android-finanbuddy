@@ -2,79 +2,50 @@ package com.example.finanbuddy.ui.screens.expenses
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.rounded.CheckCircle
-import androidx.compose.material.icons.rounded.Edit
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.finanbuddy.domain.data.expense.CategoryModel
 import com.example.finanbuddy.domain.data.onSuccess
 import com.example.finanbuddy.domain.repository.ExpenseRepositoryDummy
-import com.example.finanbuddy.ui.components.inputs.AmountTextField
-import com.example.finanbuddy.ui.components.BodyMediumBold
-import com.example.finanbuddy.ui.components.BodySmall
-import com.example.finanbuddy.ui.components.ButtonLarge
-import com.example.finanbuddy.ui.components.CategoryCard
-import com.example.finanbuddy.ui.components.CategoryCardType
 import com.example.finanbuddy.ui.components.ConfirmButton
-import com.example.finanbuddy.ui.components.inputs.DateTimeSection
 import com.example.finanbuddy.ui.components.DefaultHeader
-import com.example.finanbuddy.ui.components.LabelMedium
 import com.example.finanbuddy.ui.components.LabelSmall
-import com.example.finanbuddy.ui.components.LabelSmallBold
-import com.example.finanbuddy.ui.components.PlaceholderText
 import com.example.finanbuddy.ui.components.SpacerLarge
 import com.example.finanbuddy.ui.components.SpacerSmall
 import com.example.finanbuddy.ui.components.SpacerXLarge
+import com.example.finanbuddy.ui.components.inputs.AmountTextField
 import com.example.finanbuddy.ui.components.inputs.CategorySection
+import com.example.finanbuddy.ui.components.inputs.DateTimeSection
 import com.example.finanbuddy.ui.components.inputs.NoteSection
 import com.example.finanbuddy.ui.navigation.AppScaffold
+import com.example.finanbuddy.ui.navigation.NavigationAction
 import com.example.finanbuddy.ui.theme.FinanBuddyTheme
 import kotlinx.coroutines.runBlocking
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun ExpenseRoot() {
+fun ExpenseRoot(
+    onNavAction: (NavigationAction) -> Unit,
+) {
     val viewModel: ExpenseViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
     ExpenseScreen(
         state = state,
-        onAction = viewModel::onAction
+        onAction = viewModel::onAction,
+        onNavAction = onNavAction
     )
 }
 
@@ -82,6 +53,7 @@ fun ExpenseRoot() {
 fun ExpenseScreen(
     state: ExpenseState,
     onAction: (ExpenseAction) -> Unit,
+    onNavAction: (NavigationAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -90,16 +62,16 @@ fun ExpenseScreen(
             modifier = modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
+                .verticalScroll(rememberScrollState())
         ) {
             // Header
-            DefaultHeader(onClose = {}, title = "New Expense")
+            DefaultHeader(onClose = { onNavAction(NavigationAction.Pop) }, title = "New Expense")
 
             // Main Content
             Column(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
             ) {
                 val horizontalPadding = Modifier.padding(horizontal = 24.dp)
 
@@ -151,8 +123,18 @@ fun ExpenseScreen(
                         .fillMaxWidth()
                         .padding(horizontal = 24.dp, vertical = 24.dp),
                     onClick = { onAction(ExpenseAction.SaveTransaction) },
-                    enabled = state.amount.isNotEmpty() && state.selectedCategory != null
+                    enabled = state.amount.isNotBlank() &&
+                            state.selectedCategory?.isNotBlank() == true &&
+                            !state.isLoading
                 )
+
+                state.saveMessage?.let { message ->
+                    LabelSmall(
+                        text = message,
+                        color = if (state.isSaveSuccess) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
+                        modifier = horizontalPadding
+                    )
+                }
             }
         }
     }
@@ -203,7 +185,8 @@ private fun ExpenseScreenPreview() {
     FinanBuddyTheme {
         ExpenseScreen(
             state = state,
-            onAction = {}
+            onAction = {},
+            onNavAction = {}
         )
     }
 }
@@ -227,7 +210,8 @@ private fun ExpenseScreenDarkPreview() {
     FinanBuddyTheme {
         ExpenseScreen(
             state = state,
-            onAction = {}
+            onAction = {},
+            onNavAction = {}
         )
     }
 }

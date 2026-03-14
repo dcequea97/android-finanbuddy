@@ -52,37 +52,59 @@ class IncomesViewModel(
         when (action) {
             IncomesAction.SaveTransaction -> {
                 startLoading()
-                val transaction = with(_state.value) {
-                    if (selectedCategory?.isEmpty() == null) return
+                val currentState = _state.value
+                val selectedCategory = currentState.selectedCategory?.takeIf { it.isNotBlank() }
+                val parsedAmount = currentState.amount.toDoubleOrNull()
 
-                    Transaction(
-                        0,
-                        TransactionType.INCOME,
-                        amount.toDouble(),
-                        selectedDate,
-                        selectedTime,
-                        selectedCategory,
-                        ""
-                    )
+                if (selectedCategory == null || parsedAmount == null) {
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            saveMessage = "Completa categoria y monto valido.",
+                            isSaveSuccess = false
+                        )
+                    }
+                    return
                 }
+
+                val transaction = Transaction(
+                    id = 0,
+                    type = TransactionType.INCOME,
+                    amount = parsedAmount / 100,
+                    date = currentState.selectedDate,
+                    time = currentState.selectedTime,
+                    category = selectedCategory,
+                    note = ""
+                )
                 viewModelScope.launch {
                     transactionRepository.saveTransaction(transaction)
-                        .onSuccess { }
-                        .onError { }
+                        .onSuccess {
+                            _state.update {
+                                it.copy(saveMessage = "Ingreso guardado correctamente.", isSaveSuccess = true)
+                            }
+                        }
+                        .onError { message ->
+                            _state.update {
+                                it.copy(
+                                    saveMessage = message.ifBlank { "No se pudo guardar el ingreso." },
+                                    isSaveSuccess = false
+                                )
+                            }
+                        }
                         .onFinally { stopLoading() }
                 }
             }
             is IncomesAction.SetAmount -> {
-                _state.update { it.copy(amount = action.amount) }
+                _state.update { it.copy(amount = action.amount, saveMessage = null, isSaveSuccess = false) }
             }
             is IncomesAction.SetSelectedCategory -> {
-                _state.update { it.copy(selectedCategory = action.categoryId) }
+                _state.update { it.copy(selectedCategory = action.categoryId, saveMessage = null, isSaveSuccess = false) }
             }
             is IncomesAction.SetSelectedDate -> {
-                _state.update { it.copy(selectedDate = action.date) }
+                _state.update { it.copy(selectedDate = action.date, saveMessage = null, isSaveSuccess = false) }
             }
             is IncomesAction.SetSelectedTime -> {
-                _state.update { it.copy(selectedTime = action.time) }
+                _state.update { it.copy(selectedTime = action.time, saveMessage = null, isSaveSuccess = false) }
             }
         }
     }

@@ -10,6 +10,12 @@ interface TransactionRepository {
     suspend fun saveTransaction(transaction: Transaction): Resource<Long>
     suspend fun getTransactions(): Resource<List<Transaction>>
     suspend fun getTransactionsByType(type: TransactionType): Resource<List<Transaction>>
+
+    /**
+     * Returns the total amount for the current device month and year.
+     * Use INCOME for earned total and EXPENSE for spent total.
+     */
+    suspend fun getCurrentMonthTotal(type: TransactionType): Resource<Double>
 }
 
 class TransactionRepositoryDummy : TransactionRepository {
@@ -48,6 +54,17 @@ class TransactionRepositoryDummy : TransactionRepository {
 
     override suspend fun getTransactionsByType(type: TransactionType): Resource<List<Transaction>> {
         return Resource.Success(transactions.filter { it.type == type })
+    }
+
+    override suspend fun getCurrentMonthTotal(type: TransactionType): Resource<Double> {
+        val now = LocalDate.now()
+        val total = transactions
+            .asSequence()
+            .filter { it.type == type }
+            .filter { it.date.year == now.year && it.date.month == now.month }
+            .sumOf { it.amount }
+
+        return Resource.Success(total)
     }
 }
 

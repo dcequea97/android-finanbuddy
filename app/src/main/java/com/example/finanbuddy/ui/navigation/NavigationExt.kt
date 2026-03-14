@@ -18,8 +18,9 @@ fun NavBackStack<NavKey>.pop() {
 }
 
 fun NavBackStack<NavKey>.popTo(route: Route) {
-    while (this.lastOrNull() != route) {
-        this.removeLastOrNull()
+    while (this.isNotEmpty()) {
+        val last = this.removeLastOrNull()
+        if (last == route) break
     }
 }
 
@@ -31,4 +32,12 @@ fun NavBackStack<NavKey>.popToRoot() {
 
 fun NavBackStack<NavKey>.currentRoute(): Route {
     return this.lastOrNull() as Route
+}
+
+fun NavBackStack<NavKey>.navigateAndPopTo(
+    route: Route,
+    popTo: Route
+) {
+    this.popTo(popTo)
+    this.add(route)
 }

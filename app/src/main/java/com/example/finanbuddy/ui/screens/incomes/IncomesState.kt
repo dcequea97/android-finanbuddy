@@ -10,5 +10,7 @@ data class IncomesState(
     val selectedDate: LocalDate = LocalDate.now(),
     val selectedTime: LocalTime = LocalTime.now(),
     val selectedCategory: String? = "",
-    val categories: List<CategoryModel> = listOf()
+    val categories: List<CategoryModel> = listOf(),
+    val saveMessage: String? = null,
+    val isSaveSuccess: Boolean = false
 )

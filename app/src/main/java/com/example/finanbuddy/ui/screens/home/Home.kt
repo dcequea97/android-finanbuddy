@@ -25,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,14 +39,34 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.finanbuddy.ui.components.FinanCard
+import com.example.finanbuddy.ui.components.TransactionItem
 import com.example.finanbuddy.ui.navigation.AppScaffold
 import com.example.finanbuddy.ui.navigation.Route
 import com.example.finanbuddy.ui.theme.FinanBuddyTheme
 import com.example.finanbuddy.ui.theme.FinanColors
+import com.example.finanbuddy.utils.ext.format
+import org.koin.androidx.compose.koinViewModel
+
+@Composable
+fun HomeRoot(
+    onNavigation: (Route) -> Unit,
+    currentRoute: Route,
+    viewModel: HomeViewModel = koinViewModel()
+) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+    HomeScreen(
+        state = state,
+        onNavigation = onNavigation,
+        currentRoute = currentRoute
+    )
+}
 
 @Composable
 fun HomeScreen(
+    state: HomeState,
     onNavigation: (Route) -> Unit,
     currentRoute: Route,
     modifier: Modifier = Modifier
@@ -96,8 +117,8 @@ fun HomeScreen(
                         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                             StatCard(
                                 title = "Income",
-                                amount = "$3,200",
-                                deltaText = "+12%",
+                                amount = state.totalMonthIncomeAmount.format(2),
+                                deltaText = state.differencePercentageIncome.format(2),
                                 bgColor = FinanColors.Income,
                                 iconTint = FinanColors.OnIncome,
                                 icon = Icons.Rounded.ArrowDownward,
@@ -106,8 +127,8 @@ fun HomeScreen(
                             )
                             StatCard(
                                 title = "Expenses",
-                                amount = "$1,450",
-                                deltaText = "+5%",
+                                amount = state.totalMonthExpenseAmount.format(2),
+                                deltaText = state.differencePercentageExpense.format(2),
                                 bgColor = FinanColors.Expense,
                                 iconTint = FinanColors.OnExpense,
                                 icon = Icons.Rounded.ArrowUpward,
@@ -140,30 +161,17 @@ fun HomeScreen(
                                     modifier = Modifier.clickable { onNavigation(Route.Transactions) })
                             }
 
-                            val transactions = listOf(
-                                Transaction(
-                                    "Netflix",
-                                    "Nov 24 • Entertainment",
-                                    "-$15.00",
-                                    MaterialTheme.colorScheme.error
-                                ),
-                                Transaction(
-                                    "Freelance",
-                                    "Nov 22 • Income",
-                                    "+$500.00",
-                                    MaterialTheme.colorScheme.primary
-                                ),
-                                Transaction(
-                                    "Grocery Store",
-                                    "Nov 20 • Food",
-                                    "-$84.20",
-                                    MaterialTheme.colorScheme.secondary
-                                )
-                            )
-
                             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                transactions.forEach { tx ->
-                                    TransactionRow(transaction = tx)
+                                state.transactions.forEach { tx ->
+                                    TransactionItem(transaction = tx)
+                                }
+
+                                if (state.transactions.isEmpty() && !state.isLoading) {
+                                    Text(
+                                        text = "No recent transactions",
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        fontSize = 13.sp
+                                    )
                                 }
                             }
                         }
@@ -220,7 +228,7 @@ private fun StatCard(
 
 
                 Text(
-                    text = deltaText,
+                    text = "$deltaText%",
                     color = iconTint,
                     fontSize = 12.sp,
                     lineHeight = 12.sp,
@@ -359,61 +367,12 @@ private fun ActivityCard() {
     }
 }
 
-private data class Transaction(
-    val title: String,
-    val subtitle: String,
-    val amount: String,
-    val accent: Color
-)
-
-@Composable
-private fun TransactionRow(transaction: Transaction) {
-    FinanCard(modifier = Modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier
-                .padding(12.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(transaction.accent.copy(alpha = 0.12f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(text = "●", color = transaction.accent)
-            }
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = transaction.title,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = transaction.subtitle,
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-            Text(
-                text = transaction.amount,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = if (transaction.amount.startsWith("+")) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
-            )
-        }
-    }
-}
-
-
 @Preview(showBackground = true)
 @Composable
 private fun HomeScreenPreview() {
     FinanBuddyTheme {
         HomeScreen(
+            state = HomeState(),
             onNavigation = {},
             currentRoute = Route.Home
         )
@@ -425,6 +384,7 @@ private fun HomeScreenPreview() {
 private fun HomeScreenDarkPreview() {
     FinanBuddyTheme {
         HomeScreen(
+            state = HomeState(),
             onNavigation = {},
             currentRoute = Route.Home
         )

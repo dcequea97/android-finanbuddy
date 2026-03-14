@@ -51,44 +51,66 @@ class ExpenseViewModel(
     fun onAction(action: ExpenseAction) {
         when (action) {
             is ExpenseAction.SetSelectedCategory -> {
-                _state.update { it.copy(selectedCategory = action.categoryId) }
+                _state.update { it.copy(selectedCategory = action.categoryId, saveMessage = null, isSaveSuccess = false) }
             }
 
             is ExpenseAction.SetAmount -> {
-                _state.update { it.copy(amount = action.amount) }
+                _state.update { it.copy(amount = action.amount, saveMessage = null, isSaveSuccess = false) }
             }
 
             is ExpenseAction.SetSelectedDate -> {
-                _state.update { it.copy(selectedDate = action.date) }
+                _state.update { it.copy(selectedDate = action.date, saveMessage = null, isSaveSuccess = false) }
             }
 
             is ExpenseAction.SetSelectedTime -> {
-                _state.update { it.copy(selectedTime = action.time) }
+                _state.update { it.copy(selectedTime = action.time, saveMessage = null, isSaveSuccess = false) }
             }
 
             is ExpenseAction.SetNote -> {
-                _state.update { it.copy(note = action.note) }
+                _state.update { it.copy(note = action.note, saveMessage = null, isSaveSuccess = false) }
             }
 
             ExpenseAction.SaveTransaction -> {
                 startLoading()
-                val transaction = with(_state.value) {
-                    if (selectedCategory?.isEmpty() == null) return
+                val currentState = _state.value
+                val selectedCategory = currentState.selectedCategory?.takeIf { it.isNotBlank() }
+                val parsedAmount = currentState.amount.toDoubleOrNull()
 
-                    Transaction(
-                        0,
-                        TransactionType.EXPENSE,
-                        amount.toDouble(),
-                        selectedDate,
-                        selectedTime,
-                        selectedCategory,
-                        note
-                    )
+                if (selectedCategory == null || parsedAmount == null) {
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            saveMessage = "Completa categoria y monto valido.",
+                            isSaveSuccess = false
+                        )
+                    }
+                    return
                 }
+
+                val transaction = Transaction(
+                    id = 0,
+                    type = TransactionType.EXPENSE,
+                    amount = parsedAmount / 100,
+                    date = currentState.selectedDate,
+                    time = currentState.selectedTime,
+                    category = selectedCategory,
+                    note = currentState.note
+                )
                 viewModelScope.launch {
                     transactionRepository.saveTransaction(transaction)
-                        .onSuccess { }
-                        .onError { }
+                        .onSuccess {
+                            _state.update {
+                                it.copy(saveMessage = "Gasto guardado correctamente.", isSaveSuccess = true)
+                            }
+                        }
+                        .onError { message ->
+                            _state.update {
+                                it.copy(
+                                    saveMessage = message.ifBlank { "No se pudo guardar el gasto." },
+                                    isSaveSuccess = false
+                                )
+                            }
+                        }
                         .onFinally { stopLoading() }
                 }
             }
