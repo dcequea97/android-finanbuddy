@@ -447,6 +447,7 @@ private fun ActivityCard(
                     animationMode = AnimationMode.Together(delayBuilder = {
                         it * 500L
                     }),
+
                     minValue = 0.0,
                     maxValue = roundedMax,
                     dividerProperties = DividerProperties(enabled = false),
