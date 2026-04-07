@@ -3,9 +3,9 @@ package com.example.finanbuddy.di
 import com.example.finanbuddy.R
 import com.example.finanbuddy.data.repository.FirebaseAuthRepository
 import com.example.finanbuddy.data.repository.FirebaseTransactionRepository
+import com.example.finanbuddy.data.repository.FirebaseCategoryRepository
 import com.example.finanbuddy.domain.repository.AuthRepository
 import com.example.finanbuddy.domain.repository.CategoriesRepository
-import com.example.finanbuddy.domain.repository.ExpenseRepositoryDummy
 import com.example.finanbuddy.domain.repository.TransactionRepository
 import com.example.finanbuddy.ui.screens.auth.LoginViewModel
 import com.example.finanbuddy.ui.screens.expenses.ExpenseViewModel
@@ -22,11 +22,11 @@ private const val FIRESTORE_DATABASE_ID = "finan-buddy-db"
 
 val appModule = module {
     single<CategoriesRepository> {
-        ExpenseRepositoryDummy()
+        FirebaseCategoryRepository(get())
     }
 
     single<TransactionRepository> {
-        FirebaseTransactionRepository(get())
+        FirebaseTransactionRepository(get(), get())
     }
 
     single<AuthRepository> {

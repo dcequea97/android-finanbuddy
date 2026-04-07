@@ -9,10 +9,12 @@ import com.example.finanbuddy.domain.data.transaction.Transaction
 import com.example.finanbuddy.domain.data.transaction.TransactionType
 import com.example.finanbuddy.domain.repository.CategoriesRepository
 import com.example.finanbuddy.domain.repository.TransactionRepository
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -33,11 +35,13 @@ class ExpenseViewModel(
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ExpenseState())
 
+    private val _onExpenseSaved = Channel<Unit>(Channel.BUFFERED)
+    val onExpenseSaved = _onExpenseSaved.receiveAsFlow()
 
     private fun loadInitialData() {
         _state.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            categoriesRepository.getCategories()
+            categoriesRepository.getExpensesCategories()
                 .onSuccess { categories ->
                     _state.update { it.copy(categories = categories) }
                 }
@@ -102,6 +106,7 @@ class ExpenseViewModel(
                             _state.update {
                                 it.copy(saveMessage = "Gasto guardado correctamente.", isSaveSuccess = true)
                             }
+                            _onExpenseSaved.trySend(Unit)
                         }
                         .onError { message ->
                             _state.update {

@@ -41,3 +41,10 @@ fun NavBackStack<NavKey>.navigateAndPopTo(
     this.popTo(popTo)
     this.add(route)
 }
+
+fun NavBackStack<NavKey>.resetTo(route: Route) {
+    while (this.isNotEmpty()) {
+        this.removeLastOrNull()
+    }
+    this.add(route)
+}

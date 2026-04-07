@@ -18,8 +18,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.finanbuddy.domain.data.expense.CategoryModel
-import com.example.finanbuddy.domain.data.onSuccess
-import com.example.finanbuddy.domain.repository.ExpenseRepositoryDummy
 import com.example.finanbuddy.ui.components.CategoryCardType
 import com.example.finanbuddy.ui.components.ConfirmButton
 import com.example.finanbuddy.ui.components.DefaultHeader
@@ -32,7 +30,6 @@ import com.example.finanbuddy.ui.components.inputs.DateTimeSection
 import com.example.finanbuddy.ui.navigation.AppScaffold
 import com.example.finanbuddy.ui.navigation.NavigationAction
 import com.example.finanbuddy.ui.theme.FinanBuddyTheme
-import kotlinx.coroutines.runBlocking
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -89,7 +86,8 @@ fun IncomesScreen(
                         onAction(IncomesAction.SetSelectedCategory(categoryId))
                     },
                     onSeeAll = {},
-                    cardType = CategoryCardType.SIMPLE
+                    cardType = CategoryCardType.SIMPLE,
+                    isLoading = state.isLoading
                 )
 
                 SpacerXLarge()
@@ -155,13 +153,13 @@ private fun Amount(
 @Preview
 @Composable
 private fun Preview() {
-    var categories: List<CategoryModel> = emptyList()
-    runBlocking {
-        ExpenseRepositoryDummy().getCategories()
-            .onSuccess { list ->
-                categories = list
-            }
-    }
+    val categories: List<CategoryModel> = emptyList()
+//    runBlocking {
+//        ExpenseRepositoryDummy().getCategories()
+//            .onSuccess { list ->
+//                categories = list
+//            }
+//    }
 
     FinanBuddyTheme {
         IncomesScreen(
@@ -179,13 +177,13 @@ private fun Preview() {
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun PreviewDark() {
-    var categories: List<CategoryModel> = emptyList()
-    runBlocking {
-        ExpenseRepositoryDummy().getCategories()
-            .onSuccess { list ->
-                categories = list
-            }
-    }
+    val categories: List<CategoryModel> = emptyList()
+//    runBlocking {
+//        ExpenseRepositoryDummy().getCategories()
+//            .onSuccess { list ->
+//                categories = list
+//            }
+//    }
 
     FinanBuddyTheme {
         IncomesScreen(

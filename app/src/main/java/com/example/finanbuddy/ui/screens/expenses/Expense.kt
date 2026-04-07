@@ -10,6 +10,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,8 +19,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.finanbuddy.domain.data.expense.CategoryModel
-import com.example.finanbuddy.domain.data.onSuccess
-import com.example.finanbuddy.domain.repository.ExpenseRepositoryDummy
 import com.example.finanbuddy.ui.components.ConfirmButton
 import com.example.finanbuddy.ui.components.DefaultHeader
 import com.example.finanbuddy.ui.components.LabelSmall
@@ -33,7 +32,6 @@ import com.example.finanbuddy.ui.components.inputs.NoteSection
 import com.example.finanbuddy.ui.navigation.AppScaffold
 import com.example.finanbuddy.ui.navigation.NavigationAction
 import com.example.finanbuddy.ui.theme.FinanBuddyTheme
-import kotlinx.coroutines.runBlocking
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -42,6 +40,11 @@ fun ExpenseRoot(
 ) {
     val viewModel: ExpenseViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.onExpenseSaved.collect { onNavAction(NavigationAction.Pop) }
+    }
+
     ExpenseScreen(
         state = state,
         onAction = viewModel::onAction,
@@ -90,7 +93,8 @@ fun ExpenseScreen(
                     onCategorySelected = { categoryId ->
                         onAction(ExpenseAction.SetSelectedCategory(categoryId))
                     },
-                    onSeeAll = {}
+                    onSeeAll = {},
+                    isLoading = state.isLoading
                 )
 
                 SpacerXLarge()
@@ -169,13 +173,13 @@ private fun Amount(
 @Preview(showBackground = true)
 @Composable
 private fun ExpenseScreenPreview() {
-    var categories: List<CategoryModel> = emptyList()
-    runBlocking {
-        ExpenseRepositoryDummy().getCategories()
-            .onSuccess { list ->
-                categories = list
-            }
-    }
+    val categories: List<CategoryModel> = emptyList()
+//    runBlocking {
+//        ExpenseRepositoryDummy().getCategories()
+//            .onSuccess { list ->
+//                categories = list
+//            }
+//    }
     val state = ExpenseState(
         categories = categories,
         amount = "23423421",
@@ -194,13 +198,13 @@ private fun ExpenseScreenPreview() {
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun ExpenseScreenDarkPreview() {
-    var categories: List<CategoryModel> = emptyList()
-    runBlocking {
-        ExpenseRepositoryDummy().getCategories()
-            .onSuccess { list ->
-                categories = list
-            }
-    }
+    val categories: List<CategoryModel> = emptyList()
+//    runBlocking {
+//        ExpenseRepositoryDummy().getCategories()
+//            .onSuccess { list ->
+//                categories = list
+//            }
+//    }
     val state = ExpenseState(
         categories = categories,
         amount = "23423421",

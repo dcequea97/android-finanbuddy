@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.finanbuddy.domain.data.expense.CategoryModel
+import com.example.finanbuddy.ui.components.AppLoader
 import com.example.finanbuddy.ui.components.CategoryCard
 import com.example.finanbuddy.ui.components.CategoryCardType
 import com.example.finanbuddy.ui.components.LabelMedium
@@ -28,7 +29,8 @@ fun CategorySection(
     onCategorySelected: (String) -> Unit,
     onSeeAll: () -> Unit,
     modifier: Modifier = Modifier,
-    cardType: CategoryCardType = CategoryCardType.DETAILED
+    cardType: CategoryCardType = CategoryCardType.DETAILED,
+    isLoading: Boolean = false
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Row(
@@ -47,25 +49,32 @@ fun CategorySection(
         }
 
         val lazyItemSpacer = 12.dp
-//        val itemHeight = 128.dp
-        LazyRow(
-            modifier = Modifier
-                .fillMaxWidth()
-//                .height(itemHeight)
-            ,
-            horizontalArrangement = Arrangement.spacedBy(lazyItemSpacer),
-            contentPadding = PaddingValues(horizontal = lazyItemSpacer)
-        ) {
-            items(categories) { item ->
-                CategoryCard(
-                    item = item,
-                    isSelected = selectedCategory == item.id,
-                    onSelect = { onCategorySelected(item.id) },
-                    modifier = Modifier
-//                        .height(itemHeight)
-                    ,
-                    cardType = cardType
-                )
+        if (isLoading) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(80.dp)
+                    .padding(horizontal = lazyItemSpacer),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                AppLoader()
+            }
+        } else {
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(lazyItemSpacer),
+                contentPadding = PaddingValues(horizontal = lazyItemSpacer)
+            ) {
+                items(categories) { item ->
+                    CategoryCard(
+                        item = item,
+                        isSelected = selectedCategory == item.id,
+                        onSelect = { onCategorySelected(item.id) },
+                        cardType = cardType
+                    )
+                }
             }
         }
     }

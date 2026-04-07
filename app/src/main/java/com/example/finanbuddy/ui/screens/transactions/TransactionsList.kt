@@ -1,6 +1,5 @@
 package com.example.finanbuddy.ui.screens.transactions
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,15 +21,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.SelectableChipElevation
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -80,7 +76,7 @@ fun TransactionsListScreen(
                 IconButton(onClick = { onNavAction(NavigationAction.Pop) }) {
                     Icon(
                         imageVector = Icons.Outlined.ArrowBackIosNew,
-                        contentDescription = "Filter",
+                        contentDescription = "Back",
                         tint = Color.Unspecified
                     )
                 }
@@ -95,13 +91,12 @@ fun TransactionsListScreen(
             }
 
             Spacer(modifier = Modifier.height(12.dp))
-            val filterText = retain { mutableStateOf("") }
             OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
-                value = filterText.value,
-                onValueChange = { filterText.value = it },
+                value = state.filterText,
+                onValueChange = { onAction(TransactionsListAction.SetFilterText(it)) },
                 leadingIcon = {
                     Icon(imageVector = Icons.Outlined.Search, contentDescription = "Search")
                 },
@@ -112,95 +107,74 @@ fun TransactionsListScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            val transactionTypeSelected = retain { mutableStateOf<TransactionType?>(null) }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-
                 FilterChip(
-                    label = {
-                        LabelSmall(
-                            text = "All",
-                        )
-                    },
-                    selected = transactionTypeSelected.value == null,
-                    onClick = { transactionTypeSelected.value = null }
-
+                    label = { LabelSmall(text = "All") },
+                    selected = state.selectedType == null,
+                    onClick = { onAction(TransactionsListAction.SetSelectedType(null)) }
                 )
-                TransactionType.entries.forEach {
+
+                TransactionType.entries.forEach { type ->
                     FilterChip(
-                        label = {
-                            LabelSmall(
-                                text = it.name,
-                            )
-                        },
-                        selected = transactionTypeSelected.value == it,
-                        onClick = { transactionTypeSelected.value = it },
+                        label = { LabelSmall(text = type.name) },
+                        selected = state.selectedType == type,
+                        onClick = { onAction(TransactionsListAction.SetSelectedType(type)) }
                     )
                 }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Transactions list
-            val filteredTransactions = state.transactions
-                .filter {
-                    it.note.contains(filterText.value, ignoreCase = true) ||
-                            it.category.contains(filterText.value, ignoreCase = true) ||
-                            it.amount.toString().contains(filterText.value, ignoreCase = true)
-                }
-                .filter {
-                    transactionTypeSelected.value?.let { selectedType ->
-                        it.type == selectedType
-                    } ?: true
-                }
-
-            val grouped = groupTransactionsByDate(filteredTransactions)
-
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                grouped.entries.forEach { entry ->
-                    item {
-                        SectionHeader(title = entry.key)
-                    }
-                    items(entry.value) { tx ->
-                        TransactionItem(transaction = tx)
+            when {
+                state.isLoading -> {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(text = "Loading transactions...")
                     }
                 }
 
-                item { Spacer(modifier = Modifier.height(12.dp)) }
+                state.errorMessage != null -> {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(text = state.errorMessage)
+                            TextButton(onClick = { onAction(TransactionsListAction.Retry) }) {
+                                Text("Retry")
+                            }
+                        }
+                    }
+                }
+
+                state.groupedTransactions.isEmpty() -> {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(text = "No transactions found")
+                    }
+                }
+
+                else -> {
+                    LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        state.groupedTransactions.entries.forEach { entry ->
+                            item {
+                                SectionHeader(title = entry.key)
+                            }
+                            items(entry.value) { tx ->
+                                TransactionItem(transaction = tx)
+                            }
+                        }
+
+                        item { Spacer(modifier = Modifier.height(12.dp)) }
+                    }
+                }
             }
         }
     }
-}
-
-// Group transactions by date into Today, Yesterday, This Week, This Month, All
-fun groupTransactionsByDate(transactions: List<Transaction>): LinkedHashMap<String, List<Transaction>> {
-    val now = LocalDate.now()
-    val yesterday = now.minusDays(1)
-    val startOfWeek = now.minusDays(now.dayOfWeek.value.toLong() - 1)
-    val startOfMonth = now.withDayOfMonth(1)
-
-    val todayList = mutableListOf<Transaction>()
-    val yesterdayList = mutableListOf<Transaction>()
-    val weekList = mutableListOf<Transaction>()
-    val monthList = mutableListOf<Transaction>()
-    val allList = mutableListOf<Transaction>()
-
-    transactions.forEach { tx ->
-        when {
-            tx.date == now -> todayList.add(tx)
-            tx.date == yesterday -> yesterdayList.add(tx)
-            tx.date >= startOfWeek -> weekList.add(tx)
-            tx.date >= startOfMonth -> monthList.add(tx)
-            else -> allList.add(tx)
-        }
-    }
-
-    val result = LinkedHashMap<String, List<Transaction>>()
-    if (todayList.isNotEmpty()) result["Today"] = todayList
-    if (yesterdayList.isNotEmpty()) result["Yesterday"] = yesterdayList
-    if (weekList.isNotEmpty()) result["This Week"] = weekList
-    if (monthList.isNotEmpty()) result["This Month"] = monthList
-    if (allList.isNotEmpty()) result["All"] = allList
-    return result
 }
 
 @Composable
@@ -214,50 +188,33 @@ fun SectionHeader(title: String) {
     )
 }
 
-//@Composable
-//private fun FilterChip(text: String, selected: Boolean = false) {
-//    val bg =
-//        if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerHigh
-//    Box(
-//        modifier = Modifier
-//            .clip(MaterialTheme.shapes.medium)
-//            .background(bg)
-//            .padding(horizontal = 12.dp, vertical = 6.dp)
-//    ) {
-//        LabelSmall(
-//            text = text,
-//            color = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
-//        )
-//    }
-//}
-
 private fun sampleTransactions(): List<Transaction> = listOf(
     Transaction(
-        1,
-        TransactionType.EXPENSE,
-        5.5,
-        LocalDate.now().minusDays(1),
-        LocalTime.now(),
-        "Starbucks",
-        "Coffee"
+        id = 1,
+        type = TransactionType.EXPENSE,
+        amount = 5.5,
+        date = LocalDate.now().minusDays(1),
+        time = LocalTime.now(),
+        category = "Starbucks",
+        note = "Coffee"
     ),
     Transaction(
-        2,
-        TransactionType.EXPENSE,
-        24.5,
-        LocalDate.now().minusDays(2),
-        LocalTime.now().minusHours(2),
-        "Uber Ride",
-        "Transport"
+        id = 2,
+        type = TransactionType.EXPENSE,
+        amount = 24.5,
+        date = LocalDate.now().minusDays(2),
+        time = LocalTime.now().minusHours(2),
+        category = "Uber Ride",
+        note = "Transport"
     ),
     Transaction(
-        3,
-        TransactionType.INCOME,
-        350.0,
-        LocalDate.now().minusDays(8),
-        LocalTime.now().minusHours(4),
-        "Freelance Payment",
-        "Income"
+        id = 3,
+        type = TransactionType.INCOME,
+        amount = 350.0,
+        date = LocalDate.now().minusDays(8),
+        time = LocalTime.now().minusHours(4),
+        category = "Freelance Payment",
+        note = "Income"
     )
 )
 
@@ -265,9 +222,11 @@ private fun sampleTransactions(): List<Transaction> = listOf(
 @Composable
 private fun Preview() {
     FinanBuddyTheme {
+        val sample = sampleTransactions()
         TransactionsListScreen(
             state = TransactionsListState(
-                transactions = sampleTransactions()
+                transactions = sample,
+                groupedTransactions = groupTransactionsByDate(sample)
             ),
             onAction = {},
             onNavAction = {}
@@ -279,9 +238,11 @@ private fun Preview() {
 @Composable
 private fun DarkPreview() {
     FinanBuddyTheme {
+        val sample = sampleTransactions()
         TransactionsListScreen(
             state = TransactionsListState(
-                transactions = sampleTransactions()
+                transactions = sample,
+                groupedTransactions = groupTransactionsByDate(sample)
             ),
             onAction = {},
             onNavAction = {}

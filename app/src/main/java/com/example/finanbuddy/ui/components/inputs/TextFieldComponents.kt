@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
 import com.example.finanbuddy.utils.visualTransformation.AmountVisualTransformation
 
 @Composable
@@ -19,7 +20,10 @@ fun AmountTextField(
     modifier: Modifier = Modifier,
     maxCharacters: Int = 20,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default.copy(
+        autoCorrectEnabled = false,
+        keyboardType = KeyboardType.Number,
+    ),
     textStyle: TextStyle = MaterialTheme.typography.headlineMedium,
     color: Color = MaterialTheme.colorScheme.onSurface
 ) {

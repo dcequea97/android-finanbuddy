@@ -1,7 +1,5 @@
 package com.example.finanbuddy.ui.navigation
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -12,25 +10,30 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Analytics
 import androidx.compose.material.icons.rounded.Dashboard
+import androidx.compose.material.icons.rounded.Logout
 import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,16 +46,19 @@ fun AppScaffold(
     modifier: Modifier = Modifier,
     currentRoute: Route? = null,
     onNavigation: (Route) -> Unit = {},
+    onLogout: () -> Unit = {},
     showBottomBar: Boolean = false,
     showHeader: Boolean = false,
     showActionButton: Boolean = false,
     content: @Composable () -> Unit
 ) {
+    var showLogoutDialog by rememberSaveable { mutableStateOf(false) }
+
     Scaffold(
         modifier = modifier,
         topBar = {
             if (showHeader) {
-                Header()
+                Header(onLogout = { showLogoutDialog = true })
             }
         },
         bottomBar = {
@@ -66,7 +72,7 @@ fun AppScaffold(
         floatingActionButton = {
             if (showActionButton) {
                 AddFloatingActionButton(
-                    onClick = { onNavigation(Route.AddExpense) },
+                    onClick = { onNavigation(Route.AddExpense()) },
                     modifier = Modifier
                         .padding(end = 16.dp, bottom = 16.dp)
                 )
@@ -82,11 +88,34 @@ fun AppScaffold(
             }
         }
     )
+
+    if (showLogoutDialog) {
+        AlertDialog(
+            onDismissRequest = { showLogoutDialog = false },
+            title = { Text(text = "Cerrar sesion") },
+            text = { Text(text = "Estas seguro de que quieres cerrar sesion?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showLogoutDialog = false
+                        onLogout()
+                    }
+                ) {
+                    Text(text = "Cerrar sesion")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showLogoutDialog = false }) {
+                    Text(text = "Cancelar")
+                }
+            }
+        )
+    }
 }
 
 
 @Composable
-private fun Header() {
+private fun Header(onLogout: () -> Unit) {
     val topPadding = WindowInsets.systemBars.asPaddingValues().calculateTopPadding()
     Row(
         modifier = Modifier
@@ -113,20 +142,12 @@ private fun Header() {
                     imageVector = Icons.Rounded.Notifications
                 )
             }
-            // Placeholder avatar
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(MaterialTheme.colorScheme.surface)
-                    .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(10.dp))
-            ) {
-                // Keep placeholder simple: colored box
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.surfaceVariant)
-                ) {}
+            IconButton(onClick = onLogout) {
+                Icon(
+                    contentDescription = "Logout",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    imageVector = Icons.Rounded.Logout
+                )
             }
         }
     }
@@ -220,6 +241,6 @@ private fun BottomBarPreview() {
 @Preview(showBackground = true)
 private fun HeaderPreview() {
     FinanBuddyTheme {
-        Header()
+        Header(onLogout = {})
     }
 }
