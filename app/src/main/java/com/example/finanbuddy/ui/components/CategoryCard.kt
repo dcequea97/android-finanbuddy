@@ -25,13 +25,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.finanbuddy.domain.data.expense.CategoryModel
 import com.example.finanbuddy.ui.theme.FinanBuddyTheme
+import com.example.finanbuddy.utils.ext.handleTextWithEmoji
 
-enum class CategoryCardType { DETAILED, SIMPLE }
+enum class CategoryCardType { DETAILED, SIMPLE, SMALL }
 
 @Composable
 fun CategoryCard(
@@ -72,6 +74,15 @@ fun CategoryCard(
             selectedColor = Color(0xFF07C51A),
             topPadding = 8.dp
         )
+        CategoryCardType.SMALL -> CardSpecs(
+            height = 50.dp,
+            width = 100.dp,
+            padding = 8.dp,
+            horizontalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            selectedColor = Color(0xFF07C51A),
+            topPadding = 8.dp
+        )
     }
 
     Box(
@@ -102,24 +113,26 @@ fun CategoryCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = specs.horizontalArrangement
             ) {
-                Box(
-                    modifier = Modifier
-                        .then(Modifier.padding(top = specs.topPadding))
-                        .size(36.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(
-                            if (cardType == CategoryCardType.SIMPLE && isSelected)
-                                specs.selectedColor.copy(alpha = 0.35f)
-                            else MaterialTheme.colorScheme.surface
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = item.icon,
-                        contentDescription = item.name,
-                        tint = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.size(24.dp)
-                    )
+                if (cardType != CategoryCardType.SMALL) {
+                    Box(
+                        modifier = Modifier
+                            .then(Modifier.padding(top = specs.topPadding))
+                            .size(36.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(
+                                if (cardType == CategoryCardType.SIMPLE && isSelected)
+                                    specs.selectedColor.copy(alpha = 0.35f)
+                                else MaterialTheme.colorScheme.surface
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = item.icon,
+                            contentDescription = item.name,
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
                 }
 
                 if (isSelected && cardType == CategoryCardType.DETAILED) {
@@ -137,7 +150,17 @@ fun CategoryCard(
                 modifier = Modifier,
                 verticalArrangement = Arrangement.Center
             ) {
-                BodyMediumBold(text = item.name)
+                when (cardType) {
+                    CategoryCardType.DETAILED,
+                    CategoryCardType.SIMPLE -> BodyMediumBold(text = item.name)
+                    CategoryCardType.SMALL -> {
+                        BodyMediumBold(
+                            text = item.name.handleTextWithEmoji(),
+                            maxLines = 2,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
 
                 if (cardType == CategoryCardType.DETAILED) {
                     Spacer(modifier = Modifier.height(4.dp))
@@ -193,8 +216,8 @@ fun CategoryCardSimplePreview() {
             CategoryCard(
                 item = CategoryModel(
                     id = "1",
-                    name = "Groceries",
-                    description = "For food",
+                    name = "\uD83C\uDF10Internet",
+                    description = "\uD83C\uDF10Internet",
                     icon = Icons.Rounded.ShoppingCart,
                     color = Color.Transparent
                 ),
@@ -215,6 +238,44 @@ fun CategoryCardSimplePreview() {
                 onSelect = {},
                 cardType = CategoryCardType.SIMPLE
             )
+        }
+    }
+}
+// create preview for smaill
+@Preview(showBackground = true)
+@Composable
+private fun CategoryCardSmallPreview() {
+    FinanBuddyTheme {
+        Row(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            CategoryCard(
+                item = CategoryModel(
+                    id = "1",
+                    name = "\uD83D\uDED2Mercado",
+                    description = "For food",
+                    icon = Icons.Rounded.ShoppingCart,
+                    color = Color.Transparent
+                ),
+                isSelected = false,
+                onSelect = {},
+                cardType = CategoryCardType.SMALL
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            CategoryCard(
+                item = CategoryModel(
+                    id = "1",
+                    name = "\uD83D\uDED2Mercado",
+                    description = "\uD83D\uDED2Mercado",
+                    icon = Icons.Rounded.ShoppingCart,
+                    color = Color.Transparent
+                ),
+                isSelected = false,
+                onSelect = {},
+                cardType = CategoryCardType.SMALL
+            )
+             Spacer(modifier = Modifier.width(16.dp))
+
         }
     }
 }

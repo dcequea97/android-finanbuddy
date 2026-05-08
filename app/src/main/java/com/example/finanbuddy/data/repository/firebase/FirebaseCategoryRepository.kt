@@ -1,4 +1,4 @@
-package com.example.finanbuddy.data.repository
+package com.example.finanbuddy.data.repository.firebase
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.DirectionsBus

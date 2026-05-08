@@ -1,4 +1,4 @@
-package com.example.finanbuddy.data.repository
+package com.example.finanbuddy.data.repository.firebase
 
 import com.example.finanbuddy.data.remote.model.FirestoreTotalsDto
 import com.example.finanbuddy.data.remote.model.toFirestoreDto

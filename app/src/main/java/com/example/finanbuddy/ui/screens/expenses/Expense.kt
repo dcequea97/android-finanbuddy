@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.finanbuddy.domain.data.expense.CategoryModel
+import com.example.finanbuddy.ui.components.CategoryCardType
 import com.example.finanbuddy.ui.components.ConfirmButton
 import com.example.finanbuddy.ui.components.DefaultHeader
 import com.example.finanbuddy.ui.components.LabelSmall
@@ -53,7 +54,7 @@ fun ExpenseRoot(
 }
 
 @Composable
-fun ExpenseScreen(
+fun  ExpenseScreen(
     state: ExpenseState,
     onAction: (ExpenseAction) -> Unit,
     onNavAction: (NavigationAction) -> Unit,
@@ -94,7 +95,8 @@ fun ExpenseScreen(
                         onAction(ExpenseAction.SetSelectedCategory(categoryId))
                     },
                     onSeeAll = {},
-                    isLoading = state.isLoading
+                    isLoading = state.isLoading,
+                    cardType = CategoryCardType.SMALL
                 )
 
                 SpacerXLarge()

@@ -122,9 +122,9 @@ class HomeViewModel(
                 is Resource.Success -> {
                     val totals = totalsResult.data
                     val totalLastTwoMonthsIncomes =
-                        totals.monthIncomes + totals.previousMonthIncomes
+                        totals.monthIncomes
                     val totalLastTwoMonthsExpenses =
-                        totals.monthExpenses + totals.previousMonthExpenses
+                        totals.monthExpenses
 
                     _state.update {
                         it.copy(

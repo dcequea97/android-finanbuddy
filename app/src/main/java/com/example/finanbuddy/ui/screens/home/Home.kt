@@ -135,7 +135,7 @@ fun HomeScreen(
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "$${state.availableBalance}",
+                                text = "$${state.availableBalance.format(2)}",
                                 color = MaterialTheme.colorScheme.onBackground,
                                 fontSize = 36.sp,
                                 fontWeight = FontWeight.ExtraBold

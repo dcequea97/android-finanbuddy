@@ -18,6 +18,8 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
+        // Replace this value with your real API URL (must end with '/').
+        buildConfigField("String", "API_BASE_URL", "\"https://script.google.com/macros/s/AKfycbwoBdQ5fA8wBatGeI4FdIsZoP1kyB_AB_ZM-exj_i6ByVRMFiHpi8ausXjbcSjWxfdq/\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -37,6 +39,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -61,8 +64,12 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.gms.play.services.auth)
     implementation(libs.kotlinx.coroutines.play.services)
+    implementation(libs.retrofitCore)
+    implementation(libs.okhttpLoggingInterceptor)
+    implementation(libs.retrofitKotlinxSerializationConverter)
 
     implementation(libs.kotlinx.serialization.core)
+    implementation(libs.kotlinxSerializationJson)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

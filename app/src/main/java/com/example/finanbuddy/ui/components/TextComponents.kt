@@ -153,7 +153,8 @@ fun BodyMediumBold(
     text: String,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.onSurface,
-    maxLines: Int = 1
+    maxLines: Int = 1,
+    textAlign: TextAlign = TextAlign.Start
 ) {
     Text(
         text = text,
@@ -162,7 +163,8 @@ fun BodyMediumBold(
         color = color,
         maxLines = maxLines,
         overflow = TextOverflow.Ellipsis,
-        modifier = modifier
+        modifier = modifier,
+        textAlign = textAlign
     )
 }
 

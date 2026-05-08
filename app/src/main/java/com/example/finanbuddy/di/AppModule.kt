@@ -1,9 +1,13 @@
 package com.example.finanbuddy.di
 
 import com.example.finanbuddy.R
-import com.example.finanbuddy.data.repository.FirebaseAuthRepository
-import com.example.finanbuddy.data.repository.FirebaseTransactionRepository
-import com.example.finanbuddy.data.repository.FirebaseCategoryRepository
+import com.example.finanbuddy.data.remote.network.SheetsApi
+import com.example.finanbuddy.data.remote.network.networkModule
+import com.example.finanbuddy.data.repository.firebase.FirebaseAuthRepository
+import com.example.finanbuddy.data.repository.firebase.FirebaseTransactionRepository
+import com.example.finanbuddy.data.repository.firebase.FirebaseCategoryRepository
+import com.example.finanbuddy.data.repository.sheets.SheetsCategoriesRepository
+import com.example.finanbuddy.data.repository.sheets.SheetsTransactionRepository
 import com.example.finanbuddy.domain.repository.AuthRepository
 import com.example.finanbuddy.domain.repository.CategoriesRepository
 import com.example.finanbuddy.domain.repository.TransactionRepository
@@ -17,16 +21,25 @@ import com.google.firebase.firestore.FirebaseFirestore
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
+import retrofit2.Retrofit
 
 private const val FIRESTORE_DATABASE_ID = "finan-buddy-db"
 
 val appModule = module {
+    includes(networkModule)
+
+    single<SheetsApi> {
+        get<Retrofit>().create(SheetsApi::class.java)
+    }
+
     single<CategoriesRepository> {
-        FirebaseCategoryRepository(get())
+//        FirebaseCategoryRepository(get())
+        SheetsCategoriesRepository(get())
     }
 
     single<TransactionRepository> {
-        FirebaseTransactionRepository(get(), get())
+//        FirebaseTransactionRepository(get(), get())
+        SheetsTransactionRepository(get())
     }
 
     single<AuthRepository> {

@@ -1,4 +1,4 @@
-package com.example.finanbuddy.data.repository
+package com.example.finanbuddy.data.repository.firebase
 
 import android.content.Context
 import android.content.Intent
