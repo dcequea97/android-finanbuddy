@@ -1,0 +1,114 @@
+<resources>
+    <string name="app_name">FinanBuddy</string>
+    <string name="google_web_client_id">project-212963115400</string>
+
+    <!-- Auth -->
+    <string name="login_title">Bienvenido de nuevo</string>
+    <string name="login_subtitle">Administra tu dinero con inteligencia</string>
+    <string name="register_title">Emerald Vault</string>
+    <string name="register_subtitle">Crea tu libro de cuentas digital seguro</string>
+    <string name="label_email_address">Correo electrónico</string>
+    <string name="label_password">Contraseña</string>
+    <string name="label_full_name">Nombre completo</string>
+    <string name="placeholder_email">nombre@ejemplo.com</string>
+    <string name="placeholder_password">Ingresa tu contraseña</string>
+    <string name="placeholder_full_name">Juan Pérez</string>
+    <string name="forgot_password">¿Olvidaste tu contraseña?</string>
+    <string name="btn_login">Iniciar sesión</string>
+    <string name="btn_register">Crear cuenta</string>
+    <string name="btn_continue_google">Continuar con Google</string>
+    <string name="or_divider">O continúa con</string>
+    <string name="or_label">O</string>
+    <string name="no_account_prompt">¿No tienes cuenta? </string>
+    <string name="sign_up">Regístrate</string>
+    <string name="has_account_prompt">¿Ya tienes cuenta? </string>
+    <string name="log_in">Iniciar sesión</string>
+
+    <!-- Content descriptions - Auth -->
+    <string name="cd_back">Atrás</string>
+    <string name="cd_email">Correo electrónico</string>
+    <string name="cd_password">Contraseña</string>
+    <string name="cd_toggle_password">Mostrar u ocultar contraseña</string>
+    <string name="cd_brand">Marca</string>
+
+    <!-- Home -->
+    <string name="total_balance">Balance total</string>
+    <string name="income">Ingresos</string>
+    <string name="expenses">Gastos</string>
+    <string name="transactions">Transacciones</string>
+    <string name="view_all">Ver todo</string>
+    <string name="no_recent_transactions">Sin transacciones recientes</string>
+    <string name="activity">Actividad</string>
+    <string name="last_30_days">Últimos 30 días</string>
+
+    <!-- Expense / Income -->
+    <string name="title_new_expense">Nuevo gasto</string>
+    <string name="title_new_income">Nuevo ingreso</string>
+    <string name="label_total_amount">MONTO TOTAL</string>
+    <string name="label_enter_amount">Ingresa el monto</string>
+    <string name="btn_confirm_expense">Confirmar gasto</string>
+    <string name="btn_register_income">Registrar ingreso</string>
+
+    <!-- Transactions list -->
+    <string name="title_history">Historial</string>
+    <string name="placeholder_search_transactions">Buscar transacciones…</string>
+    <string name="filter_all">Todos</string>
+    <string name="loading_transactions">Cargando transacciones…</string>
+    <string name="no_transactions_found">No se encontraron transacciones</string>
+    <string name="btn_retry">Reintentar</string>
+    <string name="cd_filter">Filtrar</string>
+    <string name="cd_search">Buscar</string>
+
+    <!-- Transaction date groups -->
+    <string name="group_today">Hoy</string>
+    <string name="group_yesterday">Ayer</string>
+    <string name="group_this_week">Esta semana</string>
+    <string name="group_this_month">Este mes</string>
+    <string name="group_all">Todo</string>
+
+    <!-- Navigation / Scaffold -->
+    <string name="overview">Resumen</string>
+    <string name="dialog_logout_title">Cerrar sesión</string>
+    <string name="dialog_logout_message">¿Estás seguro de que quieres cerrar sesión?</string>
+    <string name="btn_logout">Cerrar sesión</string>
+    <string name="btn_cancel">Cancelar</string>
+    <string name="nav_home">Inicio</string>
+    <string name="nav_analytics">Análisis</string>
+    <string name="nav_settings">Ajustes</string>
+    <string name="cd_notifications">Notificaciones</string>
+    <string name="cd_logout">Cerrar sesión</string>
+    <string name="cd_add">Agregar</string>
+
+    <!-- Settings -->
+    <string name="title_settings">Ajustes</string>
+    <string name="settings_description">Configura el endpoint de Sheets que usa la app.</string>
+    <string name="label_sheets_url">URL de Sheets</string>
+    <string name="placeholder_sheets_url">https://…</string>
+    <string name="btn_saving">Guardando…</string>
+    <string name="btn_save">Guardar</string>
+
+    <!-- Date &amp; Time section -->
+    <string name="label_date_time">Fecha y hora</string>
+    <string name="btn_ok">Aceptar</string>
+    <string name="dialog_select_time">Seleccionar hora</string>
+    <string name="btn_confirm">Confirmar</string>
+    <string name="cd_calendar">Calendario</string>
+    <string name="cd_time">Hora</string>
+
+    <!-- Category section -->
+    <string name="label_category">Categoría</string>
+    <string name="btn_see_all">Ver todo</string>
+
+    <!-- Note section -->
+    <string name="label_note_optional">Nota (Opcional)</string>
+    <string name="placeholder_add_note">Agregar una nota…</string>
+    <string name="cd_edit_note">Editar nota</string>
+
+    <!-- Shared -->
+    <string name="cd_close">Cerrar</string>
+    <string name="cd_confirm">Confirmar</string>
+
+    <!-- Analytics -->
+    <string name="analytics_coming_soon">Próximamente: análisis</string>
+</resources>
+

@@ -35,10 +35,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.finanbuddy.R
 import com.example.finanbuddy.ui.theme.FinanBuddyTheme
 
 @Composable
@@ -92,8 +94,8 @@ fun AppScaffold(
     if (showLogoutDialog) {
         AlertDialog(
             onDismissRequest = { showLogoutDialog = false },
-            title = { Text(text = "Cerrar sesion") },
-            text = { Text(text = "Estas seguro de que quieres cerrar sesion?") },
+            title = { Text(text = stringResource(R.string.dialog_logout_title)) },
+            text = { Text(text = stringResource(R.string.dialog_logout_message)) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -101,12 +103,12 @@ fun AppScaffold(
                         onLogout()
                     }
                 ) {
-                    Text(text = "Cerrar sesion")
+                    Text(text = stringResource(R.string.btn_logout))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showLogoutDialog = false }) {
-                    Text(text = "Cancelar")
+                    Text(text = stringResource(R.string.btn_cancel))
                 }
             }
         )
@@ -125,7 +127,7 @@ private fun Header(onLogout: () -> Unit) {
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = "Overview",
+            text = stringResource(R.string.overview),
             fontSize = 22.sp,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onBackground
@@ -134,17 +136,17 @@ private fun Header(onLogout: () -> Unit) {
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = { }) {
-                // simple bell placeholder
-                Icon(
-                    contentDescription = "Notifications",
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    imageVector = Icons.Rounded.Notifications
-                )
-            }
+//            IconButton(onClick = { }) {
+//                // simple bell placeholder
+//                Icon(
+//                    contentDescription = "Notifications",
+//                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+//                    imageVector = Icons.Rounded.Notifications
+//                )
+//            }
             IconButton(onClick = onLogout) {
                 Icon(
-                    contentDescription = "Logout",
+                    contentDescription = stringResource(R.string.cd_logout),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     imageVector = Icons.Rounded.Logout
                 )
@@ -165,21 +167,9 @@ private fun BottomBar(
     )
 
     val navigationItems = listOf(
-        NavigationItem(
-            route = Route.Home,
-            label = "Home",
-            icon = Icons.Rounded.Dashboard
-        ),
-        NavigationItem(
-            route = Route.Analytics,
-            label = "Analytics",
-            icon = Icons.Rounded.Analytics
-        ),
-        NavigationItem(
-            route = Route.Settings,
-            label = "Settings",
-            icon = Icons.Rounded.Settings
-        )
+        NavigationItem(route = Route.Home, label = stringResource(R.string.nav_home), icon = Icons.Rounded.Dashboard),
+        NavigationItem(route = Route.Analytics, label = stringResource(R.string.nav_analytics), icon = Icons.Rounded.Analytics),
+        NavigationItem(route = Route.Settings, label = stringResource(R.string.nav_settings), icon = Icons.Rounded.Settings)
     )
 
     NavigationBar(
@@ -222,7 +212,7 @@ private fun AddFloatingActionButton(
     ) {
         Icon(
             // simple plus placeholder
-            contentDescription = "Add",
+            contentDescription = stringResource(R.string.cd_add),
             tint = MaterialTheme.colorScheme.onPrimaryContainer,
             imageVector = Icons.Rounded.Add
         )

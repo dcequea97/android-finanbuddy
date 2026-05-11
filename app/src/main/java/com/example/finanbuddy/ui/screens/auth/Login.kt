@@ -43,6 +43,7 @@ import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -50,6 +51,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.finanbuddy.R
 import com.example.finanbuddy.ui.navigation.AppScaffold
 import com.example.finanbuddy.ui.navigation.NavigationAction
 import com.example.finanbuddy.ui.navigation.Route
@@ -144,27 +146,27 @@ fun LoginScreen(
                 .padding(24.dp)
         ) {
             IconButton(onClick = {}) {
-                Icon(imageVector = Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Back")
+                Icon(imageVector = Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = stringResource(R.string.cd_back))
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             AuthBrandHeader(
-                title = "Welcome Back",
-                subtitle = "Manage your wealth wisely"
+                title = stringResource(R.string.login_title),
+                subtitle = stringResource(R.string.login_subtitle)
             )
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            Text("Email Address", fontWeight = FontWeight.SemiBold)
+            Text(stringResource(R.string.label_email_address), fontWeight = FontWeight.SemiBold)
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = state.email,
                 onValueChange = { onAction(LoginAction.SetEmail(it)) },
-                placeholder = { Text("name@example.com") },
+                placeholder = { Text(stringResource(R.string.placeholder_email)) },
                 leadingIcon = {
-                    Icon(imageVector = Icons.Outlined.Email, contentDescription = "Email")
+                    Icon(imageVector = Icons.Outlined.Email, contentDescription = stringResource(R.string.cd_email))
                 },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -174,21 +176,21 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(18.dp))
 
-            Text("Password", fontWeight = FontWeight.SemiBold)
+            Text(stringResource(R.string.label_password), fontWeight = FontWeight.SemiBold)
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = state.password,
                 onValueChange = { onAction(LoginAction.SetPassword(it)) },
-                placeholder = { Text("Enter your password") },
+                placeholder = { Text(stringResource(R.string.placeholder_password)) },
                 leadingIcon = {
-                    Icon(imageVector = Icons.Outlined.Lock, contentDescription = "Password")
+                    Icon(imageVector = Icons.Outlined.Lock, contentDescription = stringResource(R.string.cd_password))
                 },
                 trailingIcon = {
                     IconButton(onClick = { passwordVisible = !passwordVisible }) {
                         Icon(
                             imageVector = if (passwordVisible) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
-                            contentDescription = "Toggle password visibility"
+                            contentDescription = stringResource(R.string.cd_toggle_password)
                         )
                     }
                 },
@@ -200,7 +202,7 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Forgot Password?",
+                text = stringResource(R.string.forgot_password),
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.align(Alignment.End)
             )
@@ -217,14 +219,12 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(18.dp))
 
             Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
+                modifier = Modifier.fillMaxWidth().height(56.dp),
                 shape = RoundedCornerShape(16.dp),
                 onClick = { onAction(LoginAction.SignInWithEmail) },
                 enabled = !state.isLoading
             ) {
-                Text("Log In", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.btn_login), fontSize = 20.sp, fontWeight = FontWeight.Bold)
             }
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -233,14 +233,12 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             OutlinedButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
+                modifier = Modifier.fillMaxWidth().height(56.dp),
                 shape = RoundedCornerShape(16.dp),
                 onClick = onGoogleAuthClick,
                 enabled = !state.isLoading
             ) {
-                Text("Continue with Google", fontSize = 18.sp)
+                Text(stringResource(R.string.btn_continue_google), fontSize = 18.sp)
             }
 
             Spacer(modifier = Modifier.height(40.dp))
@@ -248,9 +246,9 @@ fun LoginScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                Text("Don't have an account? ")
+                Text(stringResource(R.string.no_account_prompt))
                 Text(
-                    text = "Sign up",
+                    text = stringResource(R.string.sign_up),
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.clickable(onClick = onNavigateRegister)
@@ -281,13 +279,13 @@ fun RegisterScreen(
         ) {
             Row(modifier = Modifier.fillMaxWidth()) {
                 IconButton(onClick = onBack) {
-                    Icon(imageVector = Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Back")
+                    Icon(imageVector = Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = stringResource(R.string.cd_back))
                 }
             }
 
             AuthBrandHeader(
-                title = "Emerald Vault",
-                subtitle = "Create your secure digital ledger"
+                title = stringResource(R.string.register_title),
+                subtitle = stringResource(R.string.register_subtitle)
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -297,15 +295,15 @@ fun RegisterScreen(
                 shape = RoundedCornerShape(28.dp)
             ) {
                 Column(modifier = Modifier.padding(20.dp)) {
-                    Text("Full Name", fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(R.string.label_full_name), fontWeight = FontWeight.SemiBold)
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = fullName,
                         onValueChange = { fullName = it },
-                        placeholder = { Text("John Doe") },
+                        placeholder = { Text(stringResource(R.string.placeholder_full_name)) },
                         leadingIcon = {
-                            Icon(imageVector = Icons.Outlined.Person, contentDescription = "Full name")
+                            Icon(imageVector = Icons.Outlined.Person, contentDescription = stringResource(R.string.label_full_name))
                         },
                         singleLine = true,
                         enabled = !state.isLoading,
@@ -313,15 +311,15 @@ fun RegisterScreen(
                     )
 
                     Spacer(modifier = Modifier.height(14.dp))
-                    Text("Email Address", fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(R.string.label_email_address), fontWeight = FontWeight.SemiBold)
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = state.email,
                         onValueChange = { onAction(LoginAction.SetEmail(it)) },
-                        placeholder = { Text("name@example.com") },
+                        placeholder = { Text(stringResource(R.string.placeholder_email)) },
                         leadingIcon = {
-                            Icon(imageVector = Icons.Outlined.Email, contentDescription = "Email")
+                            Icon(imageVector = Icons.Outlined.Email, contentDescription = stringResource(R.string.cd_email))
                         },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -330,20 +328,20 @@ fun RegisterScreen(
                     )
 
                     Spacer(modifier = Modifier.height(14.dp))
-                    Text("Password", fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(R.string.label_password), fontWeight = FontWeight.SemiBold)
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = state.password,
                         onValueChange = { onAction(LoginAction.SetPassword(it)) },
                         leadingIcon = {
-                            Icon(imageVector = Icons.Outlined.Lock, contentDescription = "Password")
+                            Icon(imageVector = Icons.Outlined.Lock, contentDescription = stringResource(R.string.cd_password))
                         },
                         trailingIcon = {
                             IconButton(onClick = { passwordVisible = !passwordVisible }) {
                                 Icon(
                                     imageVector = if (passwordVisible) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
-                                    contentDescription = "Toggle password visibility"
+                                    contentDescription = stringResource(R.string.cd_toggle_password)
                                 )
                             }
                         },
@@ -364,38 +362,34 @@ fun RegisterScreen(
 
                     Spacer(modifier = Modifier.height(18.dp))
                     Button(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
+                        modifier = Modifier.fillMaxWidth().height(56.dp),
                         shape = RoundedCornerShape(16.dp),
                         onClick = { onAction(LoginAction.RegisterWithEmail) },
                         enabled = !state.isLoading
                     ) {
-                        Text("Create Account", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.btn_register), fontSize = 20.sp, fontWeight = FontWeight.Bold)
                     }
 
                     Spacer(modifier = Modifier.height(20.dp))
-                    OrDivider(label = "OR")
+                    OrDivider(label = stringResource(R.string.or_label))
 
                     Spacer(modifier = Modifier.height(20.dp))
                     OutlinedButton(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
+                        modifier = Modifier.fillMaxWidth().height(56.dp),
                         shape = RoundedCornerShape(16.dp),
                         onClick = onGoogleAuthClick,
                         enabled = !state.isLoading
                     ) {
-                        Text("Continue with Google", fontSize = 18.sp)
+                        Text(stringResource(R.string.btn_continue_google), fontSize = 18.sp)
                     }
                 }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
             Row(horizontalArrangement = Arrangement.Center) {
-                Text("Already have an account? ")
+                Text(stringResource(R.string.has_account_prompt))
                 Text(
-                    text = "Log in",
+                    text = stringResource(R.string.log_in),
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.clickable(onClick = onNavigateLogin)
@@ -447,7 +441,7 @@ private fun AuthBrandHeader(
 }
 
 @Composable
-private fun OrDivider(label: String = "Or continue with") {
+private fun OrDivider(label: String = stringResource(R.string.or_divider)) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,

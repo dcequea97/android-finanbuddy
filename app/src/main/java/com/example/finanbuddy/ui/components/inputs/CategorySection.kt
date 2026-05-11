@@ -13,7 +13,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.finanbuddy.R
 import com.example.finanbuddy.domain.data.expense.CategoryModel
 import com.example.finanbuddy.ui.components.AppLoader
 import com.example.finanbuddy.ui.components.CategoryCard
@@ -40,10 +42,10 @@ fun CategorySection(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            LabelMedium(text = "Category")
+            LabelMedium(text = stringResource(R.string.label_category))
 
             LabelSmallBold(
-                text = "See all",
+                text = stringResource(R.string.btn_see_all),
                 modifier = Modifier.clickable(onClick = onSeeAll)
             )
         }

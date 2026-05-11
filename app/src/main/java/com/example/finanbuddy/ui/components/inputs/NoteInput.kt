@@ -19,9 +19,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.finanbuddy.R
 import com.example.finanbuddy.ui.components.LabelMedium
 import com.example.finanbuddy.ui.components.PlaceholderText
 
@@ -34,7 +36,7 @@ fun NoteSection(
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         LabelMedium(
-            text = "Note (Optional)",
+            text = stringResource(R.string.label_note_optional),
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
@@ -51,7 +53,7 @@ fun NoteSection(
                     .fillMaxWidth()
                     .height(96.dp),
                 placeholder = {
-                    PlaceholderText(text = "Add a note...")
+                    PlaceholderText(text = stringResource(R.string.placeholder_add_note))
                 },
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -68,7 +70,7 @@ fun NoteSection(
 
             Icon(
                 imageVector = Icons.Rounded.Edit,
-                contentDescription = "Edit note",
+                contentDescription = stringResource(R.string.cd_edit_note),
                 tint = Color.Gray,
                 modifier = Modifier
                     .size(20.dp)

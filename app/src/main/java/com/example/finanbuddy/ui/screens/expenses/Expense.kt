@@ -14,10 +14,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.finanbuddy.R
 import com.example.finanbuddy.domain.data.expense.CategoryModel
 import com.example.finanbuddy.ui.components.CategoryCardType
 import com.example.finanbuddy.ui.components.ConfirmButton
@@ -60,7 +62,6 @@ fun  ExpenseScreen(
     onNavAction: (NavigationAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
-
     AppScaffold {
         Column(
             modifier = modifier
@@ -69,7 +70,7 @@ fun  ExpenseScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             // Header
-            DefaultHeader(onClose = { onNavAction(NavigationAction.Pop) }, title = "New Expense")
+            DefaultHeader(onClose = { onNavAction(NavigationAction.Pop) }, title = stringResource(R.string.title_new_expense))
 
             // Main Content
             Column(
@@ -124,7 +125,7 @@ fun  ExpenseScreen(
                 SpacerLarge()
                 // Confirm Button
                 ConfirmButton(
-                    text = "Confirm Expense",
+                    text = stringResource(R.string.btn_confirm_expense),
                     modifier = horizontalPadding
                         .fillMaxWidth()
                         .padding(horizontal = 24.dp, vertical = 24.dp),
@@ -158,7 +159,7 @@ private fun Amount(
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        LabelSmall(text = "TOTAL AMOUNT")
+        LabelSmall(text = stringResource(R.string.label_total_amount))
 
         SpacerSmall()
 

@@ -32,7 +32,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.finanbuddy.R
 import com.example.finanbuddy.ui.components.BodyMedium
 import com.example.finanbuddy.ui.components.LabelMedium
 import com.example.finanbuddy.utils.ext.defaultFormat
@@ -65,14 +67,13 @@ fun DateTimeSection(
                         val selectedDate = Instant.ofEpochMilli(millis)
                             .atZone(ZoneId.of("UTC"))
                             .toLocalDate()
-
                         onDateChanged(selectedDate)
                     }
                     showDatePicker = false
-                }) { Text("OK") }
+                }) { Text(stringResource(R.string.btn_ok)) }
             },
             dismissButton = {
-                TextButton(onClick = { showDatePicker = false }) { Text("Cancelar") }
+                TextButton(onClick = { showDatePicker = false }) { Text(stringResource(R.string.btn_cancel)) }
             }
         ) {
             DatePicker(state = datePickerState)
@@ -80,14 +81,14 @@ fun DateTimeSection(
     }
     if (showTimePicker) {
         TimePickerDialog(
-            title = { Text("Seleccionar hora") },
+            title = { Text(stringResource(R.string.dialog_select_time)) },
             onDismissRequest = { showTimePicker = false },
             confirmButton = {
                 TextButton(onClick = {
                     val selectedTime = LocalTime.of(timePickerState.hour, timePickerState.minute)
                     onTimeChanged(selectedTime)
                     showTimePicker = false
-                }) { Text("Confirmar") }
+                }) { Text(stringResource(R.string.btn_confirm)) }
             }
         ) {
             TimePicker(state = timePickerState)
@@ -96,7 +97,7 @@ fun DateTimeSection(
 
     Column(modifier = modifier.fillMaxWidth()) {
         LabelMedium(
-            text = "Date & Time",
+            text = stringResource(R.string.label_date_time),
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
@@ -121,7 +122,7 @@ fun DateTimeSection(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.CalendarToday,
-                        contentDescription = "Calendar",
+                        contentDescription = stringResource(R.string.cd_calendar),
                         tint = Color.Gray,
                         modifier = Modifier
                             .size(20.dp)
@@ -149,7 +150,7 @@ fun DateTimeSection(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Schedule,
-                        contentDescription = "Time",
+                        contentDescription = stringResource(R.string.cd_time),
                         tint = Color.Gray,
                         modifier = Modifier
                             .size(20.dp)

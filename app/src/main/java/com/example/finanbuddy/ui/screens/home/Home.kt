@@ -43,8 +43,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.finanbuddy.R
 import com.example.finanbuddy.ui.components.AppLoader
 import com.example.finanbuddy.ui.components.FinanCard
 import com.example.finanbuddy.ui.components.PullToRefreshBox
@@ -128,7 +130,7 @@ fun HomeScreen(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(
-                                text = "Total Balance",
+                                text = stringResource(R.string.total_balance),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.Medium
@@ -145,7 +147,7 @@ fun HomeScreen(
                         // Stats cards grid
                         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                             StatCard(
-                                title = "Income",
+                                title = stringResource(R.string.income),
                                 amount = state.totalMonthIncomeAmount.format(2),
                                 deltaText = state.differencePercentageIncome.format(2),
                                 bgColor = FinanColors.Income,
@@ -156,7 +158,7 @@ fun HomeScreen(
                                 showLoading = state.isLoadingTransactions
                             )
                             StatCard(
-                                title = "Expenses",
+                                title = stringResource(R.string.expenses),
                                 amount = state.totalMonthExpenseAmount.format(2),
                                 deltaText = state.differencePercentageExpense.format(2),
                                 bgColor = FinanColors.Expense,
@@ -182,13 +184,13 @@ fun HomeScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "Transactions",
+                                    text = stringResource(R.string.transactions),
                                     fontSize = 18.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
-                                    text = "View All",
+                                    text = stringResource(R.string.view_all),
                                     color = MaterialTheme.colorScheme.primary,
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Bold,
@@ -226,7 +228,7 @@ fun HomeScreen(
 
                                         if (state.transactions.isEmpty()) {
                                             Text(
-                                                text = "No recent transactions",
+                                                text = stringResource(R.string.no_recent_transactions),
                                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                                 fontSize = 13.sp
                                             )
@@ -363,13 +365,13 @@ private fun ActivityCard(
             ) {
                 Column {
                     Text(
-                        text = "Activity",
+                        text = stringResource(R.string.activity),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = "Last 30 Days",
+                        text = stringResource(R.string.last_30_days),
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

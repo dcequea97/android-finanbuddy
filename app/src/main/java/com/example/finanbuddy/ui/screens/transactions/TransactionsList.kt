@@ -28,9 +28,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.finanbuddy.R
 import com.example.finanbuddy.domain.data.transaction.Transaction
 import com.example.finanbuddy.domain.data.transaction.TransactionType
 import com.example.finanbuddy.ui.components.LabelSmall
@@ -76,16 +78,16 @@ fun TransactionsListScreen(
                 IconButton(onClick = { onNavAction(NavigationAction.Pop) }) {
                     Icon(
                         imageVector = Icons.Outlined.ArrowBackIosNew,
-                        contentDescription = "Back",
+                        contentDescription = stringResource(R.string.cd_back),
                         tint = Color.Unspecified
                     )
                 }
                 Spacer(modifier = Modifier.weight(1f))
-                TitleLarge(text = "History")
+                TitleLarge(text = stringResource(R.string.title_history))
                 Spacer(modifier = Modifier.weight(1f))
                 Icon(
                     imageVector = Icons.Outlined.FilterList,
-                    contentDescription = "Filter",
+                    contentDescription = stringResource(R.string.cd_filter),
                     tint = Color.Unspecified
                 )
             }
@@ -98,10 +100,10 @@ fun TransactionsListScreen(
                 value = state.filterText,
                 onValueChange = { onAction(TransactionsListAction.SetFilterText(it)) },
                 leadingIcon = {
-                    Icon(imageVector = Icons.Outlined.Search, contentDescription = "Search")
+                    Icon(imageVector = Icons.Outlined.Search, contentDescription = stringResource(R.string.cd_search))
                 },
                 shape = RoundedCornerShape(12.dp),
-                placeholder = { Text("Search transactions...") },
+                placeholder = { Text(stringResource(R.string.placeholder_search_transactions)) },
                 singleLine = true,
             )
 
@@ -109,7 +111,7 @@ fun TransactionsListScreen(
 
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 FilterChip(
-                    label = { LabelSmall(text = "All") },
+                    label = { LabelSmall(text = stringResource(R.string.filter_all)) },
                     selected = state.selectedType == null,
                     onClick = { onAction(TransactionsListAction.SetSelectedType(null)) }
                 )
@@ -131,7 +133,7 @@ fun TransactionsListScreen(
                         modifier = Modifier.fillMaxWidth(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(text = "Loading transactions...")
+                        Text(text = stringResource(R.string.loading_transactions))
                     }
                 }
 
@@ -143,7 +145,7 @@ fun TransactionsListScreen(
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(text = state.errorMessage)
                             TextButton(onClick = { onAction(TransactionsListAction.Retry) }) {
-                                Text("Retry")
+                                Text(stringResource(R.string.btn_retry))
                             }
                         }
                     }
@@ -154,7 +156,7 @@ fun TransactionsListScreen(
                         modifier = Modifier.fillMaxWidth(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(text = "No transactions found")
+                        Text(text = stringResource(R.string.no_transactions_found))
                     }
                 }
 
@@ -162,7 +164,7 @@ fun TransactionsListScreen(
                     LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         state.groupedTransactions.entries.forEach { entry ->
                             item {
-                                SectionHeader(title = entry.key)
+                                SectionHeader(title = stringResource(entry.key.labelRes()))
                             }
                             items(entry.value) { tx ->
                                 TransactionItem(transaction = tx)

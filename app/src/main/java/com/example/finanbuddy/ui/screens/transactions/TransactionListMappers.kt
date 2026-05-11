@@ -22,7 +22,7 @@ fun filterTransactions(
         .toList()
 }
 
-fun groupTransactionsByDate(transactions: List<Transaction>): LinkedHashMap<String, List<Transaction>> {
+fun groupTransactionsByDate(transactions: List<Transaction>): LinkedHashMap<TransactionDateGroup, List<Transaction>> {
     val now = LocalDate.now()
     val yesterday = now.minusDays(1)
     val startOfWeek = now.minusDays(now.dayOfWeek.value.toLong() - 1)
@@ -44,12 +44,12 @@ fun groupTransactionsByDate(transactions: List<Transaction>): LinkedHashMap<Stri
         }
     }
 
-    val result = LinkedHashMap<String, List<Transaction>>()
-    if (todayList.isNotEmpty()) result["Today"] = todayList
-    if (yesterdayList.isNotEmpty()) result["Yesterday"] = yesterdayList
-    if (weekList.isNotEmpty()) result["This Week"] = weekList
-    if (monthList.isNotEmpty()) result["This Month"] = monthList
-    if (allList.isNotEmpty()) result["All"] = allList
+    val result = LinkedHashMap<TransactionDateGroup, List<Transaction>>()
+    if (todayList.isNotEmpty()) result[TransactionDateGroup.TODAY] = todayList
+    if (yesterdayList.isNotEmpty()) result[TransactionDateGroup.YESTERDAY] = yesterdayList
+    if (weekList.isNotEmpty()) result[TransactionDateGroup.THIS_WEEK] = weekList
+    if (monthList.isNotEmpty()) result[TransactionDateGroup.THIS_MONTH] = monthList
+    if (allList.isNotEmpty()) result[TransactionDateGroup.ALL] = allList
 
     return result
 }

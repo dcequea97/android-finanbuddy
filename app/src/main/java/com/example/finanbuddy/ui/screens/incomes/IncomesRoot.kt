@@ -13,10 +13,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.finanbuddy.R
 import com.example.finanbuddy.domain.data.expense.CategoryModel
 import com.example.finanbuddy.ui.components.CategoryCardType
 import com.example.finanbuddy.ui.components.ConfirmButton
@@ -59,7 +61,7 @@ fun IncomesScreen(
                 .background(MaterialTheme.colorScheme.background)
         ) {
             // Header
-            DefaultHeader(onClose = { onNavAction(NavigationAction.Pop) }, title = "New Income")
+            DefaultHeader(onClose = { onNavAction(NavigationAction.Pop) }, title = stringResource(R.string.title_new_income))
 
             // Main Content
             Column(
@@ -105,7 +107,7 @@ fun IncomesScreen(
 
                 // Confirm Button
                 ConfirmButton(
-                    text = "Register income",
+                    text = stringResource(R.string.btn_register_income),
                     modifier = horizontalPadding
                         .fillMaxWidth()
                         .padding(horizontal = 24.dp, vertical = 24.dp),
@@ -146,7 +148,7 @@ private fun Amount(
             )
         )
         SpacerXSmall()
-        LabelSmall(text = "Enter amount")
+        LabelSmall(text = stringResource(R.string.label_enter_amount))
     }
 }
 

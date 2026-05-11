@@ -17,9 +17,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.finanbuddy.R
 import com.example.finanbuddy.ui.components.AppLoader
 import com.example.finanbuddy.ui.navigation.AppScaffold
 import com.example.finanbuddy.ui.navigation.Route
@@ -70,14 +72,14 @@ fun SettingsScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Text(
-                    text = "Settings",
+                    text = stringResource(R.string.title_settings),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onBackground
                 )
 
                 Text(
-                    text = "Configure the Sheets endpoint used by the app.",
+                    text = stringResource(R.string.settings_description),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -86,8 +88,8 @@ fun SettingsScreen(
                     modifier = Modifier.fillMaxWidth(),
                     value = state.sheetsUrl,
                     onValueChange = { onAction(SettingsAction.SetSheetsUrl(it)) },
-                    label = { Text("Sheets Url") },
-                    placeholder = { Text("https://...") },
+                    label = { Text(stringResource(R.string.label_sheets_url)) },
+                    placeholder = { Text(stringResource(R.string.placeholder_sheets_url)) },
                     singleLine = true,
                     enabled = !state.isSaving && !state.isLoading
                 )
@@ -97,7 +99,7 @@ fun SettingsScreen(
                     enabled = !state.isSaving && !state.isLoading,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(if (state.isSaving) "Saving..." else "Save")
+                    Text(if (state.isSaving) stringResource(R.string.btn_saving) else stringResource(R.string.btn_save))
                 }
 
                 if (state.isLoading) {
