@@ -1,13 +1,15 @@
 package com.example.finanbuddy.data.repository.sheets
 
 import com.example.finanbuddy.data.remote.model.toDomain
+import com.example.finanbuddy.data.remote.network.FirebaseIdTokenProvider
 import com.example.finanbuddy.data.remote.network.SheetsApi
 import com.example.finanbuddy.domain.data.Resource
 import com.example.finanbuddy.domain.data.expense.CategoryModel
 import com.example.finanbuddy.domain.repository.CategoriesRepository
 
 class SheetsCategoriesRepository(
-    val api: SheetsApi
+    private val api: SheetsApi,
+    private val idTokenProvider: FirebaseIdTokenProvider
 ): CategoriesRepository {
     override suspend fun getIncomesCategories(): Resource<List<CategoryModel>> {
         return Resource.Success(
@@ -16,8 +18,13 @@ class SheetsCategoriesRepository(
     }
 
     override suspend fun getExpensesCategories(): Resource<List<CategoryModel>> {
+        val idToken = idTokenProvider.getIdToken(forceRefresh = false)
+            ?.trim()
+            ?.takeIf { it.isNotBlank() }
+            ?: return Resource.Error("User is not authenticated")
+
         try {
-            val response = api.getCategories()
+            val response = api.getCategories(idToken = idToken)
 
             if (response.isSuccessful) {
                 val categories = response.body()?.map { it.toDomain() } ?: emptyList()

@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.jetbrains.serialization)
     alias(libs.plugins.google.services)
@@ -67,6 +68,9 @@ dependencies {
     implementation(libs.retrofitCore)
     implementation(libs.okhttpLoggingInterceptor)
     implementation(libs.gsonConverterFactory)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    kapt(libs.androidx.room.compiler)
 
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.kotlinxSerializationJson)

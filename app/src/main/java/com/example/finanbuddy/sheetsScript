@@ -1,0 +1,207 @@
+// Constantes de columnas para el doPost (Asegúrate de que coincidan con tu hoja)
+const COL_CATEGORIA = 30; // AD
+const COL_MONTO = 33;     // AG
+const COL_FECHA = 34;     // AH
+const COL_CONCEPTO = 36;  // AJ
+
+function doGet(e) {
+  try {
+    const idToken = ((e && e.parameter && e.parameter.idToken) || "").trim();
+    const authUser = verifyFirebaseIdToken(idToken);
+    const action = e.parameter.action;
+    // Capturamos el parámetro 'month' de la URL (?month=4)
+    const monthParam = e.parameter.month;
+    const sheet = getActiveMonthSheet(monthParam);
+
+    if (action === "getBudgetDetails") {
+      const data = {
+        necesidades: getCategoryData(sheet, "K13:M31"),
+        deseos: getCategoryData(sheet, "R13:T31")
+      };
+      return jsonResponse(data);
+    }
+
+    if (action === "getIncomes") {
+      const rows = sheet.getRange("B16:F20").getValues();
+      const incomes = rows.map(row => ({
+        concepto: row[0],
+        estimado: cleanNumber(row[3]),
+        actual: cleanNumber(row[4])
+      })).filter(item => item.concepto !== "" && item.concepto !== "$");
+
+      const total = {
+        estimado: cleanNumber(sheet.getRange("E21").getValue()),
+        actual: cleanNumber(sheet.getRange("F21").getValue())
+      };
+
+      return jsonResponse({ incomes, total });
+    }
+
+    if (action === "getSummary") {
+      const summary = {
+        ingresosTotales: cleanNumber(sheet.getRange("H20").getValue()),
+        aporteDeudas: cleanNumber(sheet.getRange("E27").getValue()),
+        asignadoPresupuesto: cleanNumber(sheet.getRange("H27").getValue()),
+        pendienteAsignar: cleanNumber(sheet.getRange("C31").getValue()),
+        disponibleGastar: cleanNumber(sheet.getRange("E31").getValue()),
+        gastadoHastaAhora: cleanNumber(sheet.getRange("H31").getValue()),
+        distribucion: [
+          { cat: "Necesidades", pct: "60%", objetivo: cleanNumber(sheet.getRange("F18").getValue()), actual: cleanNumber(sheet.getRange("H18").getValue()) },
+          { cat: "Deseos", pct: "30%", objetivo: cleanNumber(sheet.getRange("F19").getValue()), actual: cleanNumber(sheet.getRange("H19").getValue()) },
+          { cat: "Futuro", pct: "10%", objetivo: cleanNumber(sheet.getRange("F20").getValue()), actual: cleanNumber(sheet.getRange("H20").getValue()) }
+        ]
+      };
+      return jsonResponse(summary);
+    }
+
+    if (action === "getCategories") {
+      const nec = sheet.getRange("K13:K31").getValues().flat().filter(String);
+      const des = sheet.getRange("R13:R31").getValues().flat().filter(String);
+      const categories = [
+        ...nec.map(n => ({name: n, type: "necesidades"})),
+        ...des.map(d => ({name: d, type: "deseos"}))
+      ];
+      return jsonResponse(categories);
+    }
+
+    if (action === "getTransactions") {
+      // Leemos desde la fila 4 hasta la 100
+      const rows = sheet.getRange("AD4:AP100").getValues();
+
+      const transactions = rows.map(row => ({
+        // Columna AD es el índice 0 del rango AD:AP
+        categoria: row[0],
+        // Columna AG es el índice 3
+        monto: cleanNumber(row[3]),
+        // Columna AH es el índice 4
+        fecha: row[4],
+        // Columna AJ es el índice 6
+        concepto: row[6]
+      })).filter(t => t.categoria !== "" && t.categoria !== "Categoría");
+
+      return jsonResponse(transactions);
+    }
+
+    return jsonResponse({ error: "Invalid or missing action" });
+
+  } catch (error) {
+    return jsonResponse({"error": error.message});
+  }
+}
+
+function doPost(e) {
+  try {
+    const data = JSON.parse((e && e.postData && e.postData.contents) || "{}");
+    const idToken = (data.idToken || "").trim();
+    const authUser = verifyFirebaseIdToken(idToken);
+    // Buscamos 'month' en el JSON enviado desde Android
+    const sheet = getActiveMonthSheet(data.month);
+
+    const range = sheet.getRange("AD4:AD100");
+    const values = range.getValues();
+    let rowToUpdate = 4;
+
+    for (let i = 0; i < values.length; i++) {
+      if (values[i][0] === "" || values[i][0] === null) {
+        rowToUpdate = 4 + i;
+        break;
+      }
+    }
+
+    sheet.getRange(rowToUpdate, COL_CATEGORIA).setValue(data.categoria);
+    sheet.getRange(rowToUpdate, COL_MONTO).setValue(data.monto);
+
+    const fechaRegistro = data.fecha ? new Date(data.fecha) : new Date();
+    sheet.getRange(rowToUpdate, COL_FECHA).setValue(fechaRegistro);
+
+    sheet.getRange(rowToUpdate, COL_CONCEPTO).setValue(data.concepto);
+
+    return jsonResponse({
+      "status": "success",
+      "row": rowToUpdate,
+      "mes": sheet.getName(),
+      "uid": authUser.localId
+    });
+
+  } catch (error) {
+    return jsonResponse({"error": error.message});
+  }
+}
+
+function verifyFirebaseIdToken(idToken) {
+  if (!idToken) {
+    throw new Error("Missing idToken");
+  }
+
+  const apiKey = PropertiesService.getScriptProperties().getProperty("FIREBASE_API_KEY");
+  if (!apiKey) {
+    throw new Error("Missing FIREBASE_API_KEY in Script Properties");
+  }
+
+  const url = "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=" + encodeURIComponent(apiKey);
+  const response = UrlFetchApp.fetch(url, {
+    method: "post",
+    contentType: "application/json",
+    payload: JSON.stringify({ idToken: idToken }),
+    muteHttpExceptions: true
+  });
+
+  if (response.getResponseCode() !== 200) {
+    throw new Error("Invalid token");
+  }
+
+  const payload = JSON.parse(response.getContentText() || "{}");
+  const user = payload && payload.users && payload.users.length ? payload.users[0] : null;
+  if (!user || !user.localId) {
+    throw new Error("Token verification failed");
+  }
+
+  return user;
+}
+
+
+/**
+ * Lógica mejorada para manejar el mes dinámico
+ */
+function getActiveMonthSheet(month) {
+  const months = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+  let monthName;
+
+  // Validamos si el parámetro month es válido (1-12)
+  if (month && !isNaN(month) && month >= 1 && month <= 12) {
+    monthName = months[parseInt(month) - 1];
+  } else {
+    // Si no viene o es inválido, usamos el mes actual
+    monthName = months[new Date().getMonth()];
+  }
+
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(monthName);
+
+  if (!sheet) throw new Error("No se encontró la hoja: '" + monthName + "'");
+  return sheet;
+}
+
+function cleanNumber(value) {
+  if (typeof value === "number") return value;
+  if (!value || value === "$") return 0;
+  let cleaned = value.toString().replace(/[$\s]/g, "").replace(/\./g, "").replace(",", ".");
+  let num = parseFloat(cleaned);
+  return isNaN(num) ? 0 : num;
+}
+
+function getCategoryData(sheet, rangeStr) {
+  const values = sheet.getRange(rangeStr).getValues();
+  return values
+    .filter(row => row[0] !== "" && row[0] !== "Categoría")
+    .map(row => ({
+      nombre: row[0],
+      estimado: cleanNumber(row[1]),
+      actual: cleanNumber(row[2])
+    }));
+}
+
+function jsonResponse(data) {
+  return ContentService.createTextOutput(JSON.stringify(data))
+    .setMimeType(ContentService.MimeType.JSON);
+}

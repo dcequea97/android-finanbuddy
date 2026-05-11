@@ -13,18 +13,20 @@ import retrofit2.http.Query
 interface SheetsApi {
     @GET("exec")
     suspend fun getCategories(
-//        @Query("month") month: Int = 1,
+        @Query("idToken") idToken: String,
         @Query("action") action: String = "getCategories"
     ): Response<CategoriesResponse>
 
     @GET("exec")
     suspend fun getAllTransactions(
+        @Query("idToken") idToken: String,
         @Query("month") month: Int,
         @Query("action") action: String = "getTransactions"
     ): Response<SheetsTransactionsResponse>
 
     @GET("exec")
     suspend fun getSummary(
+        @Query("idToken") idToken: String,
         @Query("month") month: Int,
         @Query("action") action: String = "getSummary"
     ): Response<SheetsSummaryResponse>

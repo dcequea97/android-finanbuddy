@@ -15,6 +15,7 @@ import com.example.finanbuddy.ui.screens.auth.RegisterRoot
 import com.example.finanbuddy.ui.screens.expenses.ExpenseRoot
 import com.example.finanbuddy.ui.screens.home.HomeRoot
 import com.example.finanbuddy.ui.screens.incomes.IncomesRoot
+import com.example.finanbuddy.ui.screens.settings.SettingsRoot
 import com.example.finanbuddy.ui.screens.transactions.TransactionsListRoot
 import org.koin.compose.koinInject
 
@@ -65,6 +66,14 @@ fun AppNavigation() {
 
                 entry<Route.Home> {
                     HomeRoot(
+                        onNavigation = { route -> onNavigationAction(NavigationAction.Navigate(route)) },
+                        currentRoute = backStack.currentRoute(),
+                        onLogout = onLogout
+                    )
+                }
+
+                entry<Route.Settings> {
+                    SettingsRoot(
                         onNavigation = { route -> onNavigationAction(NavigationAction.Navigate(route)) },
                         currentRoute = backStack.currentRoute(),
                         onLogout = onLogout
