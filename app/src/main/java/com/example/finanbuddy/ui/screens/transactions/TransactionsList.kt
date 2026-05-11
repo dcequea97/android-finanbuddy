@@ -195,7 +195,7 @@ private fun sampleTransactions(): List<Transaction> = listOf(
         amount = 5.5,
         date = LocalDate.now().minusDays(1),
         time = LocalTime.now(),
-        category = "Starbucks",
+        category = "\uD83C\uDF10Internet",
         note = "Coffee"
     ),
     Transaction(
@@ -204,7 +204,7 @@ private fun sampleTransactions(): List<Transaction> = listOf(
         amount = 24.5,
         date = LocalDate.now().minusDays(2),
         time = LocalTime.now().minusHours(2),
-        category = "Uber Ride",
+        category = "\uD83D\uDED2Mercado",
         note = "Transport"
     ),
     Transaction(

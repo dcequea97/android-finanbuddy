@@ -17,3 +17,21 @@ fun String.handleTextWithEmoji(): String {
         name
     }
 }
+
+fun String.extractEmoji(): String {
+    val firstLetterIdentifier = this.indexOfFirst { it.isLetterOrDigit() }
+    return if (firstLetterIdentifier != -1) {
+        this.take(firstLetterIdentifier).trim()
+    } else {
+        ""
+    }
+}
+
+fun String.extractText(): String {
+    val firstLetterIdentifier = this.indexOfFirst { it.isLetterOrDigit() }
+    return if (firstLetterIdentifier != -1) {
+        this.substring(firstLetterIdentifier)
+    } else {
+        ""
+    }
+}

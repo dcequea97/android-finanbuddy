@@ -169,10 +169,10 @@ fun HomeScreen(
                         }
 
                         // Activity card
-                        ActivityCard(
-                            incomes = state.transactionsIncomesByMonth,
-                            expenses = state.transactionsExpensesByMonth
-                        )
+//                        ActivityCard(
+//                            incomes = state.transactionsIncomesByMonth,
+//                            expenses = state.transactionsExpensesByMonth
+//                        )
 
                         // Transactions
                         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {

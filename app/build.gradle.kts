@@ -66,7 +66,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.play.services)
     implementation(libs.retrofitCore)
     implementation(libs.okhttpLoggingInterceptor)
-    implementation(libs.retrofitKotlinxSerializationConverter)
+    implementation(libs.gsonConverterFactory)
 
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.kotlinxSerializationJson)

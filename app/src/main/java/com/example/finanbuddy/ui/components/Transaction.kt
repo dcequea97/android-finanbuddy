@@ -21,7 +21,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.finanbuddy.domain.data.transaction.Transaction
 import com.example.finanbuddy.domain.data.transaction.TransactionType
+import com.example.finanbuddy.utils.ext.extractEmoji
+import com.example.finanbuddy.utils.ext.extractText
 import com.example.finanbuddy.utils.ext.format
+import com.example.finanbuddy.utils.ext.handleTextWithEmoji
 import com.example.finanbuddy.utils.ext.shortFormat
 
 
@@ -53,11 +56,11 @@ fun TransactionItem(transaction: Transaction) {
                     .background(color.copy(alpha = 0.12f)),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = "●", color = color)
+                Text(text = title.extractEmoji(), color = color)
             }
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = title,
+                    text = title.extractText(),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface

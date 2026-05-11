@@ -1,13 +1,13 @@
 package com.example.finanbuddy.data.remote.network
 
 import com.example.finanbuddy.BuildConfig
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 val networkModule = module {
     single {
@@ -33,12 +33,10 @@ val networkModule = module {
     }
 
     single {
-        val contentType = "application/json".toMediaType()
-
         Retrofit.Builder()
             .baseUrl(BuildConfig.API_BASE_URL)
             .client(get())
-            .addConverterFactory(get<Json>().asConverterFactory(contentType))
+            .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
 

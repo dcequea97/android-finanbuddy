@@ -54,14 +54,12 @@ class SheetsTransactionRepository(
             val response = api.getSummary(month = currentMonth)
             if (response.isSuccessful) {
                 val data = response.body() ?: return Resource.Error("Unknown error")
-
-                // redondea todo a 2 decimales
                 val totals = TransactionTotals(
                     availableAmount = data.disponibleGastar,
                     monthIncomes = data.ingresosTotales,
-                    monthExpenses = data.gastadoHastaAhora.toDouble(),
-                    previousMonthIncomes = data.gastadoHastaAhora.toDouble(),
-                    previousMonthExpenses = data.gastadoHastaAhora.toDouble(),
+                    monthExpenses = data.gastadoHastaAhora,
+                    previousMonthIncomes = data.gastadoHastaAhora,
+                    previousMonthExpenses = data.gastadoHastaAhora,
                 )
                 return Resource.Success(totals)
             }
