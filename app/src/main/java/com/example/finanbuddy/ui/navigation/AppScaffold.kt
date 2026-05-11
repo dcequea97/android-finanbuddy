@@ -52,6 +52,7 @@ fun AppScaffold(
     showBottomBar: Boolean = false,
     showHeader: Boolean = false,
     showActionButton: Boolean = false,
+    headerTitle: String = stringResource(R.string.overview),
     content: @Composable () -> Unit
 ) {
     var showLogoutDialog by rememberSaveable { mutableStateOf(false) }
@@ -60,7 +61,10 @@ fun AppScaffold(
         modifier = modifier,
         topBar = {
             if (showHeader) {
-                Header(onLogout = { showLogoutDialog = true })
+                Header(
+                    onLogout = { showLogoutDialog = true },
+                    title = headerTitle
+                )
             }
         },
         bottomBar = {
@@ -117,7 +121,10 @@ fun AppScaffold(
 
 
 @Composable
-private fun Header(onLogout: () -> Unit) {
+private fun Header(
+    onLogout: () -> Unit,
+    title: String = stringResource(R.string.overview)
+) {
     val topPadding = WindowInsets.systemBars.asPaddingValues().calculateTopPadding()
     Row(
         modifier = Modifier
@@ -127,7 +134,7 @@ private fun Header(onLogout: () -> Unit) {
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = stringResource(R.string.overview),
+            text = title,
             fontSize = 22.sp,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onBackground

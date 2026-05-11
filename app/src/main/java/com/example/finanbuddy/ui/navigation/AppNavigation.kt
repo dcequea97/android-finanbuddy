@@ -1,7 +1,8 @@
 package com.example.finanbuddy.ui.navigation
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
@@ -42,9 +43,9 @@ fun AppNavigation() {
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
     ) {
         NavDisplay(
             backStack = backStack,

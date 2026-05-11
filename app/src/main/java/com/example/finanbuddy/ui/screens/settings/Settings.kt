@@ -57,8 +57,8 @@ fun SettingsScreen(
         onNavigation = onNavigation,
         onLogout = onLogout,
         currentRoute = currentRoute,
-        showBottomBar = true,
-        showHeader = true
+        showHeader = true,
+        headerTitle = stringResource(R.string.title_settings)
     ) {
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -71,12 +71,12 @@ fun SettingsScreen(
                     .padding(horizontal = 16.dp, vertical = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text(
-                    text = stringResource(R.string.title_settings),
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
+//                Text(
+//                    text = stringResource(R.string.title_settings),
+//                    style = MaterialTheme.typography.headlineSmall,
+//                    fontWeight = FontWeight.SemiBold,
+//                    color = MaterialTheme.colorScheme.onBackground
+//                )
 
                 Text(
                     text = stringResource(R.string.settings_description),

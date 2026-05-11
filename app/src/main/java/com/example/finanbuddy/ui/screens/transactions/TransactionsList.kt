@@ -65,7 +65,9 @@ fun TransactionsListScreen(
     onAction: (TransactionsListAction) -> Unit,
     onNavAction: (NavigationAction) -> Unit
 ) {
-    AppScaffold {
+    AppScaffold(
+
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
