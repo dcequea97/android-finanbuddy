@@ -3,8 +3,11 @@ package com.example.finanbuddy.ui.navigation
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 
-
 fun NavBackStack<NavKey>.navigate(route: Route) {
+    if (this.lastOrNull() == route) {
+        return
+    }
+
     if (this.any { it == route }) {
         this.popTo(route)
         return
@@ -18,9 +21,10 @@ fun NavBackStack<NavKey>.pop() {
 }
 
 fun NavBackStack<NavKey>.popTo(route: Route) {
-    while (this.isNotEmpty()) {
-        val last = this.removeLastOrNull()
-        if (last == route) break
+    if (!this.contains(route)) return
+
+    while (this.isNotEmpty() && this.lastOrNull() != route) {
+        this.removeLastOrNull()
     }
 }
 

@@ -111,7 +111,7 @@ function doPost(e) {
     sheet.getRange(rowToUpdate, COL_CATEGORIA).setValue(data.categoria);
     sheet.getRange(rowToUpdate, COL_MONTO).setValue(data.monto);
 
-    const fechaRegistro = data.fecha ? new Date(data.fecha) : new Date();
+    const fechaRegistro = parseDateOrNow(data.fecha);
     sheet.getRange(rowToUpdate, COL_FECHA).setValue(fechaRegistro);
 
     sheet.getRange(rowToUpdate, COL_CONCEPTO).setValue(data.concepto);
@@ -188,6 +188,19 @@ function cleanNumber(value) {
   let cleaned = value.toString().replace(/[$\s]/g, "").replace(/\./g, "").replace(",", ".");
   let num = parseFloat(cleaned);
   return isNaN(num) ? 0 : num;
+}
+
+function parseDateOrNow(value) {
+  if (!value || (typeof value === "string" && value.trim() === "")) {
+    return new Date();
+  }
+
+  const parsed = new Date(value);
+  if (isNaN(parsed.getTime())) {
+    return new Date();
+  }
+
+  return parsed;
 }
 
 function getCategoryData(sheet, rangeStr) {

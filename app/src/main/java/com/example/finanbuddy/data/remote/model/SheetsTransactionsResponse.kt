@@ -8,6 +8,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.LocalTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 class SheetsTransactionsResponse : ArrayList<SheetsTransactionsResponseItem>()
@@ -27,35 +28,33 @@ private val dateFormatters = listOf(
     DateTimeFormatter.ofPattern("MM/dd/yyyy"),
     DateTimeFormatter.ofPattern("yyyy/MM/dd")
 )
-
 fun parseDateFlexible(dateString: String): LocalDate {
     val raw = dateString.trim()
 
+    if (raw.isBlank()) return LocalDate.now()
+
+    // 1. Intentar con los formatters conocidos
     for (formatter in dateFormatters) {
-        try {
-            return LocalDate.parse(raw, formatter)
-        } catch (_: Exception) {
-            // Keep trying next known format.
-        }
+        runCatching { LocalDate.parse(raw, formatter) }
+            .getOrNull()?.let { return it }
     }
 
-    // Accept ISO date-time payloads like 2026-05-08T00:00:00.000Z
-    try {
-        return OffsetDateTime.parse(raw, DateTimeFormatter.ISO_OFFSET_DATE_TIME).toLocalDate()
-    } catch (_: Exception) {
+    // 2. Intentar con formatos ISO estándar de forma secuencial
+    val isoParsers = listOf(
+        { OffsetDateTime.parse(raw).toLocalDate() },
+        { LocalDateTime.parse(raw).toLocalDate() },
+        { Instant.parse(raw).atZone(ZoneId.of("UTC")).toLocalDate() },
+        { LocalDate.parse(raw) } // ISO_LOCAL_DATE por defecto
+    )
+
+    for (parser in isoParsers) {
+        runCatching { parser() }
+            .getOrNull()?.let { return it }
     }
 
-    try {
-        return Instant.parse(raw).atOffset(java.time.ZoneOffset.UTC).toLocalDate()
-    } catch (_: Exception) {
-    }
-
-    try {
-        return LocalDateTime.parse(raw, DateTimeFormatter.ISO_LOCAL_DATE_TIME).toLocalDate()
-    } catch (_: Exception) {
-    }
-
-    throw IllegalArgumentException("Unable to parse date: $dateString")
+    // 3. Log de advertencia si falló todo
+    println("Advertencia: No se pudo parsear '$raw'. Usando fecha actual.")
+    return LocalDate.now()
 }
 
 fun SheetsTransactionsResponseItem.toDomain(): Transaction {
