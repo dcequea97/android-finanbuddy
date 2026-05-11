@@ -10,6 +10,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.example.finanbuddy.domain.repository.AuthRepository
+import com.example.finanbuddy.ui.screens.analytics.AnalyticsRoot
 import com.example.finanbuddy.ui.screens.auth.LoginRoot
 import com.example.finanbuddy.ui.screens.auth.RegisterRoot
 import com.example.finanbuddy.ui.screens.expenses.ExpenseRoot
@@ -94,6 +95,10 @@ fun AppNavigation() {
 
                 entry<Route.Transactions> {
                     TransactionsListRoot(onNavAction = onNavigationAction)
+                }
+
+                entry<Route.Analytics> {
+                    AnalyticsRoot()
                 }
             }
         )
