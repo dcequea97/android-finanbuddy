@@ -1,6 +1,7 @@
 package com.example.finanbuddy.data.repository.sheets
 
 import com.example.finanbuddy.data.remote.model.SheetSaveData
+import com.example.finanbuddy.data.remote.model.SheetsTransactionsResponseItem
 import com.example.finanbuddy.data.remote.model.toDomain
 import com.example.finanbuddy.data.remote.network.FirebaseIdTokenProvider
 import com.example.finanbuddy.data.remote.network.SheetsApi
@@ -98,7 +99,9 @@ class SheetsTransactionRepository(
             val response = api.getAllTransactions(idToken = idToken, month = month)
             if (response.isSuccessful) {
                 val data = response.body() ?: emptyList()
-                val transactions = data.map { it.toDomain() }
+                val transactions = data.mapIndexed { index, item ->
+                    item.toDomain().copy(id = buildStableTransactionId(item, index))
+                }
                 return Resource.Success(transactions)
             }
 
@@ -114,5 +117,14 @@ class SheetsTransactionRepository(
         return idTokenProvider.getIdToken(forceRefresh = false)
             ?.trim()
             ?.takeIf { it.isNotBlank() }
+    }
+
+    /**
+     * Sheets rows currently do not provide a backend id. We derive a deterministic id
+     * from row content + position so Room does not overwrite all rows under id=0.
+     */
+    private fun buildStableTransactionId(item: SheetsTransactionsResponseItem, index: Int): Long {
+        val fingerprint = "${item.fecha}|${item.categoria}|${item.concepto}|${item.monto}|$index"
+        return fingerprint.hashCode().toLong() and Long.MAX_VALUE
     }
 }

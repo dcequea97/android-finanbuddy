@@ -37,14 +37,10 @@ class IncomesViewModel(
     private fun loadInitialData() {
         _state.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            categoriesRepository.getIncomesCategories()
-                .onSuccess { categories ->
-                    _state.update { it.copy(categories = categories) }
+            categoriesRepository.getIncomesCategoriesFlow()
+                .collect { categories ->
+                    _state.update { it.copy(categories = categories, isLoading = false) }
                 }
-                .onError { _ ->
-                    // TODO()
-                }
-                .onFinally { _state.update { it.copy(isLoading = false) } }
         }
     }
 

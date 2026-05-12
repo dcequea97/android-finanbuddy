@@ -135,6 +135,14 @@ fun  ExpenseScreen(
                             !state.isLoading
                 )
 
+                if (state.isSyncingFromBackend) {
+                    LabelSmall(
+                        text = stringResource(R.string.sync_updating),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = horizontalPadding
+                    )
+                }
+
                 state.saveMessage?.let { message ->
                     LabelSmall(
                         text = message,

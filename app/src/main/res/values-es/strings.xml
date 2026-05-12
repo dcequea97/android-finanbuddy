@@ -38,6 +38,7 @@
     <string name="transactions">Transacciones</string>
     <string name="view_all">Ver todo</string>
     <string name="no_recent_transactions">Sin transacciones recientes</string>
+    <string name="sync_updating">Actualizando…</string>
     <string name="activity">Actividad</string>
     <string name="last_30_days">Últimos 30 días</string>
 

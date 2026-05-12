@@ -50,25 +50,16 @@ class TransactionsListViewModel(
     private fun getInitData() {
         _state.update { it.copy(isLoading = true, errorMessage = null) }
         viewModelScope.launch {
-            when (val result = transactionRepository.getTransactions()) {
-                is Resource.Success -> {
+            transactionRepository.getTransactionsFlow()
+                .collect { transactions ->
                     _state.update {
-                        it.copy(transactions = result.data.sortedByDescending { tx -> tx.date.atTime(tx.time) })
+                        it.copy(
+                            transactions = transactions.sortedByDescending { tx -> tx.date.atTime(tx.time) },
+                            isLoading = false
+                        )
                     }
                     applyFilters()
                 }
-
-                is Resource.Error -> {
-                    _state.update {
-                        it.copy(
-                            errorMessage = result.message.ifBlank { "Could not load transactions" },
-                            groupedTransactions = linkedMapOf()
-                        )
-                    }
-                }
-            }
-
-            _state.update { it.copy(isLoading = false) }
         }
     }
 

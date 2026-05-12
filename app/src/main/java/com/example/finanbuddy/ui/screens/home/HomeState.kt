@@ -15,6 +15,7 @@ data class HomeState(
     val availableBalance: Double = 0.0,
     val transactionsIncomesByMonth: List<Double>? = null,
     val transactionsExpensesByMonth: List<Double>? = null,
+    val isSyncingFromBackend: Boolean = false,
 
     val isLoadingTransactions: Boolean = true
 )

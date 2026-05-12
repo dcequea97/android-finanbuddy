@@ -40,15 +40,18 @@ class ExpenseViewModel(
 
     private fun loadInitialData() {
         _state.update { it.copy(isLoading = true) }
+
         viewModelScope.launch {
-            categoriesRepository.getExpensesCategories()
-                .onSuccess { categories ->
-                    _state.update { it.copy(categories = categories) }
+            transactionRepository.isSyncingFromBackendFlow().collect { syncing ->
+                _state.update { it.copy(isSyncingFromBackend = syncing) }
+            }
+        }
+
+        viewModelScope.launch {
+            categoriesRepository.getExpensesCategoriesFlow()
+                .collect { categories ->
+                    _state.update { it.copy(categories = categories, isLoading = false) }
                 }
-                .onError { _ ->
-                    // TODO()
-                }
-                .onFinally { _state.update { it.copy(isLoading = false) } }
         }
     }
 

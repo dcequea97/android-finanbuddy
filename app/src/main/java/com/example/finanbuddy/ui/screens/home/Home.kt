@@ -142,6 +142,15 @@ fun HomeScreen(
                                 fontSize = 36.sp,
                                 fontWeight = FontWeight.ExtraBold
                             )
+                            if (state.isSyncingFromBackend) {
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = stringResource(R.string.sync_updating),
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
                         }
 
                         // Stats cards grid
