@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.flowOf
 
 interface TransactionRepository {
     suspend fun saveTransaction(transaction: Transaction): Resource<Long>
+    suspend fun updateTransaction(transaction: Transaction): Resource<Long>
     suspend fun getTransactions(): Resource<List<Transaction>>
     suspend fun getRecentTransactions(limit: Int): Resource<List<Transaction>>
     suspend fun getTransactionsByType(type: TransactionType): Resource<List<Transaction>>

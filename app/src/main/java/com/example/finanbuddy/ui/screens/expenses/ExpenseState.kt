@@ -7,6 +7,8 @@ import java.time.LocalTime
 data class ExpenseState(
     val isLoading: Boolean = false,
     val isSyncingFromBackend: Boolean = false,
+    val isEditMode: Boolean = false,
+    val editingTransactionId: Long? = null,
     val selectedCategory: String? = "",
     val amount: String = "",
     val selectedDate: LocalDate = LocalDate.now(),

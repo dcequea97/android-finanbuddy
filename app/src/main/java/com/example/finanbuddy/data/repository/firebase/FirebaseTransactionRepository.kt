@@ -115,6 +115,10 @@ class FirebaseTransactionRepository(
         }
     }
 
+    override suspend fun updateTransaction(transaction: Transaction): Resource<Long> {
+        return Resource.Error(message = "Update transaction not implemented for Firebase repository")
+    }
+
     override suspend fun getTransactions(): Resource<List<Transaction>> {
         val userId = firebaseAuth.currentUser?.uid
             ?: return Resource.Error(message = "No authenticated user found")

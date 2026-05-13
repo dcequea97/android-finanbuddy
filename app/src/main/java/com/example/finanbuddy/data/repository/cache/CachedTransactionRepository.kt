@@ -38,6 +38,14 @@ class CachedTransactionRepository(
         }
     }
 
+    override suspend fun updateTransaction(transaction: Transaction): Resource<Long> {
+        return remoteRepository.updateTransaction(transaction).also { result ->
+            if (result is Resource.Success) {
+                transactionDao.insertTransaction(transaction.toEntity())
+            }
+        }
+    }
+
     override suspend fun getTransactions(): Resource<List<Transaction>> = Resource.Success(emptyList())
 
     override fun getTransactionsFlow(): Flow<List<Transaction>> {

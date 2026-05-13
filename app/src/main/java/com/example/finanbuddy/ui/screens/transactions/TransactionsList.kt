@@ -40,6 +40,7 @@ import com.example.finanbuddy.ui.components.TitleLarge
 import com.example.finanbuddy.ui.components.TransactionItem
 import com.example.finanbuddy.ui.navigation.AppScaffold
 import com.example.finanbuddy.ui.navigation.NavigationAction
+import com.example.finanbuddy.ui.navigation.Route
 import com.example.finanbuddy.ui.theme.FinanBuddyTheme
 import org.koin.androidx.compose.koinViewModel
 import java.time.LocalDate
@@ -169,7 +170,24 @@ fun TransactionsListScreen(
                                 SectionHeader(title = stringResource(entry.key.labelRes()))
                             }
                             items(entry.value) { tx ->
-                                TransactionItem(transaction = tx)
+                                TransactionItem(
+                                    transaction = tx,
+                                    onClick = {
+                                        if (tx.type == TransactionType.EXPENSE) {
+                                            onNavAction(
+                                                NavigationAction.Navigate(
+                                                    Route.AddExpense(
+                                                        editTransactionId = tx.id,
+                                                        editCategory = tx.category,
+                                                        editAmount = kotlin.math.abs(tx.amount),
+                                                        editDateIso = tx.date.toString(),
+                                                        editNote = tx.note
+                                                    )
+                                                )
+                                            )
+                                        }
+                                    }
+                                )
                             }
                         }
 

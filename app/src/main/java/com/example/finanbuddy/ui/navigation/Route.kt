@@ -26,7 +26,14 @@ sealed interface Route : NavKey {
      * scopes a fresh ViewModel to the new entry, destroying it on pop.
      */
     @Serializable
-    data class AddExpense(val instanceId: String = java.util.UUID.randomUUID().toString()) : Route
+    data class AddExpense(
+        val instanceId: String = java.util.UUID.randomUUID().toString(),
+        val editTransactionId: Long? = null,
+        val editCategory: String? = null,
+        val editAmount: Double? = null,
+        val editDateIso: String? = null,
+        val editNote: String? = null
+    ) : Route
 
     /** Same unique-instance pattern as AddExpense. */
     @Serializable

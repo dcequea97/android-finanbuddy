@@ -1,6 +1,7 @@
 package com.example.finanbuddy.ui.navigation
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -44,7 +45,9 @@ fun AppNavigation() {
     }
 
     Surface(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .imePadding(),
         color = MaterialTheme.colorScheme.background
     ) {
         NavDisplay(
@@ -82,8 +85,11 @@ fun AppNavigation() {
                     )
                 }
 
-                entry<Route.AddExpense> {
-                    ExpenseRoot(onNavAction = onNavigationAction)
+                entry<Route.AddExpense> { route ->
+                    ExpenseRoot(
+                        onNavAction = onNavigationAction,
+                        route = route
+                    )
                 }
 
                 entry<Route.AddIncome> {

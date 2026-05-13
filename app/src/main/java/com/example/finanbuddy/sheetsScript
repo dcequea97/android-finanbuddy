@@ -97,14 +97,28 @@ function doPost(e) {
     // Buscamos 'month' en el JSON enviado desde Android
     const sheet = getActiveMonthSheet(data.month);
 
-    const range = sheet.getRange("AD4:AD100");
-    const values = range.getValues();
-    let rowToUpdate = 4;
+    const action = (data.action || "").trim();
+    let rowToUpdate = null;
 
-    for (let i = 0; i < values.length; i++) {
-      if (values[i][0] === "" || values[i][0] === null) {
-        rowToUpdate = 4 + i;
-        break;
+    if (action === "updateTransaction") {
+      if (!data.row || isNaN(data.row)) {
+        throw new Error("Missing or invalid row for updateTransaction");
+      }
+
+      rowToUpdate = parseInt(data.row, 10);
+      if (rowToUpdate < 4) {
+        throw new Error("Invalid target row");
+      }
+    } else {
+      const range = sheet.getRange("AD4:AD100");
+      const values = range.getValues();
+      rowToUpdate = 4;
+
+      for (let i = 0; i < values.length; i++) {
+        if (values[i][0] === "" || values[i][0] === null) {
+          rowToUpdate = 4 + i;
+          break;
+        }
       }
     }
 
@@ -118,6 +132,7 @@ function doPost(e) {
 
     return jsonResponse({
       "status": "success",
+      "action": action || "saveTransaction",
       "row": rowToUpdate,
       "mes": sheet.getName(),
       "uid": authUser.localId
@@ -187,7 +202,7 @@ function cleanNumber(value) {
   if (!value || value === "$") return 0;
   let cleaned = value.toString().replace(/[$\s]/g, "").replace(/\./g, "").replace(",", ".");
   let num = parseFloat(cleaned);
-  return parsed;
+  return isNaN(num) ? 0 : num;
 }
 
 function getCategoryData(sheet, rangeStr) {

@@ -8,5 +8,8 @@ data class SheetSaveData(
     val monto: Double,
     val concepto: String,
     val fecha: String,
-    val idToken: String
+    val idToken: String,
+    val action: String? = null,
+    val month: Int? = null,
+    val row: Int? = null
 )

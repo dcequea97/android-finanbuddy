@@ -34,18 +34,40 @@ import com.example.finanbuddy.ui.components.inputs.DateTimeSection
 import com.example.finanbuddy.ui.components.inputs.NoteSection
 import com.example.finanbuddy.ui.navigation.AppScaffold
 import com.example.finanbuddy.ui.navigation.NavigationAction
+import com.example.finanbuddy.ui.navigation.Route
 import com.example.finanbuddy.ui.theme.FinanBuddyTheme
 import org.koin.androidx.compose.koinViewModel
+import java.util.Locale
 
 @Composable
 fun ExpenseRoot(
     onNavAction: (NavigationAction) -> Unit,
+    route: Route.AddExpense,
 ) {
     val viewModel: ExpenseViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.onExpenseSaved.collect { onNavAction(NavigationAction.Pop) }
+    }
+
+    LaunchedEffect(route.editTransactionId) {
+        val transactionId = route.editTransactionId ?: return@LaunchedEffect
+        val category = route.editCategory ?: return@LaunchedEffect
+        val amount = route.editAmount ?: return@LaunchedEffect
+        val dateIso = route.editDateIso ?: return@LaunchedEffect
+
+        val clearAmount = String.format(Locale.US, "%.2f", amount)
+            .filter { it.isDigit() }
+        viewModel.onAction(
+            ExpenseAction.InitializeEdit(
+                transactionId = transactionId,
+                categoryId = category,
+                amount = clearAmount,
+                dateIso = dateIso,
+                note = route.editNote.orEmpty()
+            )
+        )
     }
 
     ExpenseScreen(
@@ -70,7 +92,14 @@ fun  ExpenseScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             // Header
-            DefaultHeader(onClose = { onNavAction(NavigationAction.Pop) }, title = stringResource(R.string.title_new_expense))
+            DefaultHeader(
+                onClose = { onNavAction(NavigationAction.Pop) },
+                title = if (state.isEditMode) {
+                    stringResource(R.string.title_edit_expense)
+                } else {
+                    stringResource(R.string.title_new_expense)
+                }
+            )
 
             // Main Content
             Column(
@@ -125,7 +154,11 @@ fun  ExpenseScreen(
                 SpacerLarge()
                 // Confirm Button
                 ConfirmButton(
-                    text = stringResource(R.string.btn_confirm_expense),
+                    text = if (state.isEditMode) {
+                        stringResource(R.string.btn_save_changes)
+                    } else {
+                        stringResource(R.string.btn_confirm_expense)
+                    },
                     modifier = horizontalPadding
                         .fillMaxWidth()
                         .padding(horizontal = 24.dp, vertical = 24.dp),

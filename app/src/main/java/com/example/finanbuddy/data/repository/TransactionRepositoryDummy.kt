@@ -43,6 +43,20 @@ class TransactionRepositoryDummy : TransactionRepository {
         return Resource.Success(newTransaction.id)
     }
 
+    override suspend fun updateTransaction(transaction: Transaction): Resource<Long> {
+        val index = transactions.indexOfFirst { it.id == transaction.id }
+        if (index == -1) {
+            return Resource.Error("Transaction not found")
+        }
+
+        val normalizedAmount = when (transaction.type) {
+            TransactionType.INCOME -> abs(transaction.amount)
+            TransactionType.EXPENSE -> -abs(transaction.amount)
+        }
+        transactions[index] = transaction.copy(amount = normalizedAmount)
+        return Resource.Success(transaction.id)
+    }
+
     override suspend fun getTransactions(): Resource<List<Transaction>> {
         return Resource.Success(transactions.sortedByDescending { it.date.atTime(it.time) })
     }

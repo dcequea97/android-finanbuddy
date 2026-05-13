@@ -20,7 +20,7 @@ android {
         versionCode = 1
         versionName = "1.0"
         // Replace this value with your real API URL (must end with '/').
-        buildConfigField("String", "API_BASE_URL", "\"https://script.google.com/macros/s/AKfycbwoBdQ5fA8wBatGeI4FdIsZoP1kyB_AB_ZM-exj_i6ByVRMFiHpi8ausXjbcSjWxfdq/\"")
+        buildConfigField("String", "API_BASE_URL", "\"https://script.google.com/macros/s/AKfycbwbahlNqxvL6hcdTeGQDszuySw2EnGBBg8hWmJO9ywV_eReTaX2sxAgYwBVxxe5BDSUHw/\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

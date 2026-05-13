@@ -1,6 +1,7 @@
 package com.example.finanbuddy.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,7 +30,10 @@ import com.example.finanbuddy.utils.ext.shortFormat
 
 
 @Composable
-fun TransactionItem(transaction: Transaction) {
+fun TransactionItem(
+    transaction: Transaction,
+    onClick: (() -> Unit)? = null
+) {
     val color = when(transaction.type) {
         TransactionType.INCOME -> MaterialTheme.colorScheme.primary
         TransactionType.EXPENSE -> MaterialTheme.colorScheme.error
@@ -41,7 +45,15 @@ fun TransactionItem(transaction: Transaction) {
 
     val title = transaction.category
     val subtitle = "${transaction.date.shortFormat()} - ${transaction.note}"
-    FinanCard(modifier = Modifier.fillMaxWidth()) {
+    val cardModifier = if (onClick != null) {
+        Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+    } else {
+        Modifier.fillMaxWidth()
+    }
+
+    FinanCard(modifier = cardModifier) {
         Row(
             modifier = Modifier
                 .padding(12.dp)

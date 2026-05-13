@@ -44,10 +44,12 @@
 
     <!-- Expense / Income -->
     <string name="title_new_expense">Nuevo gasto</string>
+    <string name="title_edit_expense">Editar gasto</string>
     <string name="title_new_income">Nuevo ingreso</string>
     <string name="label_total_amount">MONTO TOTAL</string>
     <string name="label_enter_amount">Ingresa el monto</string>
     <string name="btn_confirm_expense">Confirmar gasto</string>
+    <string name="btn_save_changes">Guardar cambios</string>
     <string name="btn_register_income">Registrar ingreso</string>
 
     <!-- Transactions list -->

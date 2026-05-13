@@ -16,6 +16,8 @@ class SheetsTransactionRepository(
     private val api: SheetsApi,
     private val idTokenProvider: FirebaseIdTokenProvider
 ): TransactionRepository {
+    private data class SheetIdParts(val month: Int, val row: Int)
+
     override suspend fun saveTransaction(transaction: Transaction): Resource<Long> {
         val idToken = loadIdTokenOrNull()
             ?: return Resource.Error("User is not authenticated")
@@ -26,7 +28,8 @@ class SheetsTransactionRepository(
                 monto = transaction.amount,
                 concepto = transaction.note,
                 fecha = transaction.date.toString(),
-                idToken = idToken
+                idToken = idToken,
+                month = transaction.date.monthValue
             )
 
             val response = api.postDataToSheets(txApi)
@@ -39,6 +42,36 @@ class SheetsTransactionRepository(
             )
         } catch (e: Exception) {
             return Resource.Error(e.message ?: "Unknown error")
+        }
+    }
+
+    override suspend fun updateTransaction(transaction: Transaction): Resource<Long> {
+        val idToken = loadIdTokenOrNull()
+            ?: return Resource.Error("User is not authenticated")
+
+        val idParts = decodeSheetTransactionId(transaction.id)
+            ?: return Resource.Error("Cannot edit this transaction id")
+
+        return try {
+            val payload = SheetSaveData(
+                categoria = transaction.category,
+                monto = transaction.amount,
+                concepto = transaction.note,
+                fecha = transaction.date.toString(),
+                idToken = idToken,
+                action = "updateTransaction",
+                month = idParts.month,
+                row = idParts.row
+            )
+
+            val response = api.postDataToSheets(payload)
+            if (response.isSuccessful) {
+                Resource.Success(transaction.id)
+            } else {
+                Resource.Error(response.errorBody()?.string() ?: "Unknown error")
+            }
+        } catch (e: Exception) {
+            Resource.Error(e.message ?: "Unknown error")
         }
     }
 
@@ -100,7 +133,7 @@ class SheetsTransactionRepository(
             if (response.isSuccessful) {
                 val data = response.body() ?: emptyList()
                 val transactions = data.mapIndexed { index, item ->
-                    item.toDomain().copy(id = buildStableTransactionId(item, index))
+                    item.toDomain().copy(id = buildStableTransactionId(month, item, index))
                 }
                 return Resource.Success(transactions)
             }
@@ -120,11 +153,28 @@ class SheetsTransactionRepository(
     }
 
     /**
-     * Sheets rows currently do not provide a backend id. We derive a deterministic id
-     * from row content + position so Room does not overwrite all rows under id=0.
+     * Encodes sheet coordinates in id so edit can decode month/row later.
+     * Data starts at row 4 (AD4).
      */
-    private fun buildStableTransactionId(item: SheetsTransactionsResponseItem, index: Int): Long {
-        val fingerprint = "${item.fecha}|${item.categoria}|${item.concepto}|${item.monto}|$index"
-        return fingerprint.hashCode().toLong() and Long.MAX_VALUE
+    private fun buildStableTransactionId(
+        month: Int,
+        item: SheetsTransactionsResponseItem,
+        index: Int
+    ): Long {
+        val row = SHEET_START_ROW + index
+        return (month * MONTH_MULTIPLIER + row).toLong()
+    }
+
+    private fun decodeSheetTransactionId(id: Long): SheetIdParts? {
+        if (id <= 0) return null
+        val month = (id / MONTH_MULTIPLIER).toInt()
+        val row = (id % MONTH_MULTIPLIER).toInt()
+        if (month !in 1..12 || row < SHEET_START_ROW) return null
+        return SheetIdParts(month = month, row = row)
+    }
+
+    private companion object {
+        const val SHEET_START_ROW = 4
+        const val MONTH_MULTIPLIER = 1000
     }
 }

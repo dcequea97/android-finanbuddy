@@ -31,7 +31,6 @@ fun AnalyticsScreen(
     state: AnalyticsState,
     onAction: (AnalyticsAction) -> Unit,
 ) {
-    //pon un aviso de proximamente
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
         Text(text = stringResource(R.string.analytics_coming_soon))
 

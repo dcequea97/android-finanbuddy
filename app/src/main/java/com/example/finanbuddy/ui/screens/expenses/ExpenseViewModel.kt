@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 class ExpenseViewModel(
     private val categoriesRepository: CategoriesRepository,
@@ -57,6 +58,26 @@ class ExpenseViewModel(
 
     fun onAction(action: ExpenseAction) {
         when (action) {
+            is ExpenseAction.InitializeEdit -> {
+                if (_state.value.editingTransactionId == action.transactionId) return
+
+                val parsedDate = runCatching { LocalDate.parse(action.dateIso) }
+                    .getOrDefault(LocalDate.now())
+
+                _state.update {
+                    it.copy(
+                        isEditMode = true,
+                        editingTransactionId = action.transactionId,
+                        selectedCategory = action.categoryId,
+                        amount = action.amount,
+                        selectedDate = parsedDate,
+                        note = action.note,
+                        saveMessage = null,
+                        isSaveSuccess = false
+                    )
+                }
+            }
+
             is ExpenseAction.SetSelectedCategory -> {
                 _state.update { it.copy(selectedCategory = action.categoryId, saveMessage = null, isSaveSuccess = false) }
             }
@@ -95,7 +116,7 @@ class ExpenseViewModel(
                 }
 
                 val transaction = Transaction(
-                    id = 0,
+                    id = currentState.editingTransactionId ?: 0,
                     type = TransactionType.EXPENSE,
                     amount = parsedAmount / 100,
                     date = currentState.selectedDate,
@@ -104,10 +125,23 @@ class ExpenseViewModel(
                     note = currentState.note
                 )
                 viewModelScope.launch {
-                    transactionRepository.saveTransaction(transaction)
+                    val result = if (currentState.isEditMode) {
+                        transactionRepository.updateTransaction(transaction)
+                    } else {
+                        transactionRepository.saveTransaction(transaction)
+                    }
+
+                    result
                         .onSuccess {
                             _state.update {
-                                it.copy(saveMessage = "Gasto guardado correctamente.", isSaveSuccess = true)
+                                it.copy(
+                                    saveMessage = if (currentState.isEditMode) {
+                                        "Gasto actualizado correctamente."
+                                    } else {
+                                        "Gasto guardado correctamente."
+                                    },
+                                    isSaveSuccess = true
+                                )
                             }
                             _onExpenseSaved.trySend(Unit)
                         }
