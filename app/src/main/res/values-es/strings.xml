@@ -77,6 +77,7 @@
     <string name="btn_cancel">Cancelar</string>
     <string name="nav_home">Inicio</string>
     <string name="nav_analytics">Análisis</string>
+    <string name="nav_scanner">Escaner</string>
     <string name="nav_settings">Ajustes</string>
     <string name="cd_notifications">Notificaciones</string>
     <string name="cd_logout">Cerrar sesión</string>
@@ -113,5 +114,15 @@
 
     <!-- Analytics -->
     <string name="analytics_coming_soon">Próximamente: análisis</string>
+
+    <!-- Scanner -->
+    <string name="scanner_step_processing">Analizando recibo…</string>
+    <string name="scanner_step_saving">Guardando transacción…</string>
+    <string name="scanner_success_title">¡Transacción guardada!</string>
+    <string name="scanner_success_subtitle">El recibo fue procesado correctamente.</string>
+    <string name="scanner_error_load_image">No se pudo cargar la imagen. Intenta de nuevo.</string>
+    <string name="scanner_error_generic">Algo salió mal. Intenta de nuevo.</string>
+    <string name="scanner_error_scan_failed">No se pudo completar el escaneo. Intenta de nuevo.</string>
+    <string name="btn_scan_another">Escanear otro recibo</string>
 </resources>
 

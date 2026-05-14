@@ -20,6 +20,7 @@ import com.example.finanbuddy.ui.screens.auth.LoginViewModel
 import com.example.finanbuddy.ui.screens.expenses.ExpenseViewModel
 import com.example.finanbuddy.ui.screens.home.HomeViewModel
 import com.example.finanbuddy.ui.screens.incomes.IncomesViewModel
+import com.example.finanbuddy.ui.screens.scanner.ScannerViewModel
 import com.example.finanbuddy.ui.screens.settings.SettingsViewModel
 import com.example.finanbuddy.ui.screens.transactions.TransactionsListViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -87,4 +88,5 @@ val appModule = module {
     viewModel { LoginViewModel(get()) }
     viewModel { TransactionsListViewModel(get()) }
     viewModel { SettingsViewModel(get()) }
+    viewModel { ScannerViewModel(get(), get(), get()) }
 }

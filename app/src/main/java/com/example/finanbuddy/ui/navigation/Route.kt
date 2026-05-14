@@ -16,7 +16,7 @@ sealed interface Route : NavKey {
     object Home : Route, NavKey
 
     @Serializable
-    object Analytics : Route
+    object Scanner : Route
 
     @Serializable
     object Settings : Route

@@ -77,6 +77,7 @@
     <string name="btn_cancel">Cancel</string>
     <string name="nav_home">Home</string>
     <string name="nav_analytics">Analytics</string>
+    <string name="nav_scanner">Scanner</string>
     <string name="nav_settings">Settings</string>
     <string name="cd_notifications">Notifications</string>
     <string name="cd_logout">Logout</string>
@@ -113,4 +114,14 @@
 
     <!-- Analytics -->
     <string name="analytics_coming_soon">Wait for analytics</string>
+
+    <!-- Scanner -->
+    <string name="scanner_step_processing">Analyzing receipt…</string>
+    <string name="scanner_step_saving">Saving transaction…</string>
+    <string name="scanner_success_title">Transaction saved!</string>
+    <string name="scanner_success_subtitle">The receipt was processed successfully.</string>
+    <string name="scanner_error_load_image">Could not load the image. Please try again.</string>
+    <string name="scanner_error_generic">Something went wrong. Please try again.</string>
+    <string name="scanner_error_scan_failed">The scan could not be completed. Please try again.</string>
+    <string name="btn_scan_another">Scan another receipt</string>
 </resources>

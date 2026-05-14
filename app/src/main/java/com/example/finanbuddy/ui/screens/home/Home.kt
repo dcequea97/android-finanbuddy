@@ -40,13 +40,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.finanbuddy.R
+import com.example.finanbuddy.domain.data.transaction.TransactionType
 import com.example.finanbuddy.ui.components.AppLoader
 import com.example.finanbuddy.ui.components.FinanCard
 import com.example.finanbuddy.ui.components.PullToRefreshBox
@@ -232,7 +233,22 @@ fun HomeScreen(
                                 } else {
                                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                         state.transactions.forEach { tx ->
-                                            TransactionItem(transaction = tx)
+                                            TransactionItem(
+                                                transaction = tx,
+                                                onClick = {
+                                                    if (tx.type == TransactionType.EXPENSE) {
+                                                        onNavigation(
+                                                            Route.AddExpense(
+                                                                editTransactionId = tx.id,
+                                                                editCategory = tx.category,
+                                                                editAmount = kotlin.math.abs(tx.amount),
+                                                                editDateIso = tx.date.toString(),
+                                                                editNote = tx.note
+                                                            )
+                                                        )
+                                                    }
+                                                }
+                                            )
                                         }
 
                                         if (state.transactions.isEmpty()) {
@@ -419,9 +435,10 @@ private fun ActivityCard(
                 }
 
                 var maxValue =
-                    (normalizedIncomes.maxOrNull()?.coerceAtLeast(normalizedExpenses.maxOrNull() ?: 0.0)) ?: 1000.0
+                    (normalizedIncomes.maxOrNull()
+                        ?.coerceAtLeast(normalizedExpenses.maxOrNull() ?: 0.0)) ?: 1000.0
                 maxValue = if (maxValue == 0.0) 1000.0 else maxValue
-                
+
                 val magnitude = if (maxValue > 1.0) {
                     10.0.pow(floor(log10(maxValue)))
                 } else {
@@ -429,7 +446,7 @@ private fun ActivityCard(
                 }
                 val step = magnitude / 2.0
                 val roundedMax = ceil(maxValue / step) * step
-                
+
                 LineChart(
                     modifier = Modifier
                         .fillMaxSize()

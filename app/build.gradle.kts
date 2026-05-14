@@ -94,6 +94,8 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-
     implementation (libs.compose.charts)
+
+    implementation(libs.firebase.ai)
+    implementation(libs.google.play.services.mlkit.document.scanner)
 }
