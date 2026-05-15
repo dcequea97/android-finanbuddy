@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Analytics
+import androidx.compose.material.icons.rounded.CameraAlt
 import androidx.compose.material.icons.rounded.Dashboard
 import androidx.compose.material.icons.rounded.Logout
 import androidx.compose.material.icons.rounded.Settings
@@ -174,7 +175,7 @@ private fun BottomBar(
 
     val navigationItems = listOf(
         NavigationItem(route = Route.Home, label = stringResource(R.string.nav_home), icon = Icons.Rounded.Dashboard),
-        NavigationItem(route = Route.Scanner, label = stringResource(R.string.nav_analytics), icon = Icons.Rounded.Analytics),
+        NavigationItem(route = Route.Scanner, label = stringResource(R.string.nav_scanner), icon = Icons.Rounded.CameraAlt),
         NavigationItem(route = Route.Settings, label = stringResource(R.string.nav_settings), icon = Icons.Rounded.Settings)
     )
 

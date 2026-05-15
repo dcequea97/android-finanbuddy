@@ -115,7 +115,7 @@ class ScannerViewModel(
     }
 
     private val generativeModel = Firebase.ai.generativeModel(
-        modelName = "gemini-flash-latest",
+        modelName = "gemini-3.1-flash-lite"
     )
 
     private suspend fun sendPrompt(bitmap: Bitmap) {
